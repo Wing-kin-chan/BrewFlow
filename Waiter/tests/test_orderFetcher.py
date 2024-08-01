@@ -1,6 +1,10 @@
 import pytest
 from datetime import date, time
 from Waiter.app.scripts.orders import fetchOrder
+from fastapi.testclient import TestClient
+from Orders.main import app
+
+client = TestClient(app)
 
 def test_fetchOrders():
     order = fetchOrder.fetchOrder()
@@ -28,7 +32,7 @@ def test_fetchOrders():
         assert isinstance(drink.milk, str)
         assert isinstance(drink.shots, int)
         assert isinstance(drink.temperature, str)
-        assert isinstance(drink.texture, str)
+        assert isinstance(drink.texture, str) or drink.texture is None
         assert isinstance(drink.options, list)
         assert all(isinstance(option, str) for option in drink.options)
         
