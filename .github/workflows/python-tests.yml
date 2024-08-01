@@ -46,11 +46,13 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Start FastAPI Server
         run: |
-          fastapi dev Orders/main.py --host 127.0.0.1 --port 8000
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
         env:
           PORT: 8000
       - name: Test waiter API
         env:
           BASE_URL: http://127.0.0.1:8000
         run: |
+          sleep 5 #Wait for Uvicorn server to initialize
           pytest Waiter/tests/test_orderFetcher.py
