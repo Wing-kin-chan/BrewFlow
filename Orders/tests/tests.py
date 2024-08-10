@@ -58,10 +58,12 @@ def test_random_name_generation(capsys):
 
 def test_generateOrder():
     order = Order.generateOrder()
+    assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
     assert hasattr(order, 'date')
     assert hasattr(order, 'time')
     assert hasattr(order, 'drinks')
+    assert isinstance(order.orderID, int)
     assert isinstance(order.customer, str)
     assert isinstance(order.date, date)
     assert isinstance(order.time, time)
@@ -86,10 +88,12 @@ def test_random_order_generation(capsys):
         orders = [Order.generateOrder() for _ in trange(0, 50)]
     
     for order in orders:
+        assert hasattr(order, 'orderID')
         assert hasattr(order, 'customer')
         assert hasattr(order, 'date')
         assert hasattr(order, 'time')
         assert hasattr(order, 'drinks')
+        assert isinstance(order.orderID, int)
         assert isinstance(order.customer, str)
         assert isinstance(order.date, date)
         assert isinstance(order.time, time)
@@ -137,5 +141,3 @@ def test_getOrder():
         assert isinstance(drink["texture"], str) or drink["texture"] is None
         assert isinstance(drink["temperature"], str)
         assert isinstance(drink["options"], list)
-
-    
