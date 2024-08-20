@@ -87,12 +87,12 @@ jobs:
           uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
         env:
           PORT: 8000
-      - name: Test waiter API
+      - name: Test fetchOrder API
         env:
           BASE_URL: http://127.0.0.1:8000
         run: |
           sleep 5 #Wait for Uvicorn server to initialize
-          pytest Waiter/tests/test_orderFetcher.py
+          pytest Manager/tests/test_orderFetcher.py
 
   test-queueManager:
     runs-on: 'ubuntu-latest'
@@ -114,5 +114,5 @@ jobs:
             pip install flake8 pytest
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test queue manager
-        run: pytest Waiter/tests/test_queueManager.py
+        run: pytest Manager/tests/test_queueManager.py
   

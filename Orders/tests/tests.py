@@ -1,32 +1,50 @@
 import pytest
 from tqdm import trange
 from fastapi.testclient import TestClient
-from Orders.app.generate_drink import *
-from Orders.app.generate_order import *
-from Orders.config.options import *
-from Orders.main import app
 from datetime import date, time
-import json
+from typing import List
+import json, os
+
+from Orders.app.generate_drink import generateDrink
+from Orders.app.generate_order import generateOrder, getCustomerName
+from Menu import Order, Drink
+from Orders.main import app
 
 client = TestClient(app)
 
+RELATIVE_PATH = "../../Menu/"
+MENU_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), RELATIVE_PATH, "menu.json"
+)
+
+with open(MENU_FILE_PATH, 'r') as f:
+    data = json.load(f)
+MILKS: List[str] = data.get('milks', [])
+TEXTURES: List[str] = data.get('textures', [])
+DRINKS: List[dict] = data.get('drinks', [])
+OPTIONS: List[str] = data.get('options', [])
+MILKS.append('No Milk')
+TEXTURES.append(None)
+
 def test_generateDrink():
-    drink = Drink.generateDrink()
+    drink = Drink.model_validate(generateDrink())
     assert hasattr(drink, 'drink')
     assert hasattr(drink, 'milk')
     assert hasattr(drink, 'texture')
     assert hasattr(drink, 'shots')
     assert hasattr(drink, 'temperature')
-    assert drink.drink in list(DRINKS.keys())
+    assert hasattr(drink, 'milk_volume')
+    assert drink.drink in [drink['drink'] for drink in DRINKS]
     assert drink.milk in MILKS
     assert drink.texture in TEXTURES
-    assert drink.temperature in TEMPERATURES
+    assert drink.temperature in ['Extra Hot', 'Normal', 'Warm']
     assert all(option in OPTIONS for option in drink.options)
     assert isinstance(drink.shots, int)
+    assert isinstance(drink.milk_volume, float)
 
 def test_random_drink_generation(capsys):
     with capsys.disabled():
-        drinks = [Drink.generateDrink() for _ in range(0, 1000)]
+        drinks = [Drink.model_validate(generateDrink()) for _ in range(0, 1000)]
 
     drink_types = set(drink.drink for drink in drinks)
     assert len(drink_types) > 1
@@ -37,12 +55,14 @@ def test_random_drink_generation(capsys):
         assert hasattr(drink, 'texture')
         assert hasattr(drink, 'shots')
         assert hasattr(drink, 'temperature')
-        assert drink.drink in list(DRINKS.keys())
+        assert hasattr(drink, 'milk_volume')
+        assert drink.drink in [drink['drink'] for drink in DRINKS]
         assert drink.milk in MILKS
         assert drink.texture in TEXTURES
-        assert drink.temperature in TEMPERATURES
+        assert drink.temperature in ['Extra Hot', 'Normal', 'Warm']
         assert all(option in OPTIONS for option in drink.options)
         assert isinstance(drink.shots, int)
+        assert isinstance(drink.milk_volume, float)
     
 def test_getCustomerName():
     name = getCustomerName()
@@ -57,7 +77,7 @@ def test_random_name_generation(capsys):
     assert all(isinstance(name, str) for name in unique_names)
 
 def test_generateOrder():
-    order = Order.generateOrder()
+    order = generateOrder()
     assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
     assert hasattr(order, 'date')
@@ -76,16 +96,16 @@ def test_generateOrder():
         assert hasattr(drink, 'texture')
         assert hasattr(drink, 'shots')
         assert hasattr(drink, 'temperature')
-        assert drink.drink in list(DRINKS.keys())
+        assert drink.drink in [drink['drink'] for drink in DRINKS]
         assert drink.milk in MILKS
         assert drink.texture in TEXTURES
-        assert drink.temperature in TEMPERATURES
+        assert drink.temperature in ['Extra Hot', 'Normal', 'Warm']
         assert all(option in OPTIONS for option in drink.options)
         assert isinstance(drink.shots, int)
 
 def test_random_order_generation(capsys):
     with capsys.disabled():
-        orders = [Order.generateOrder() for _ in trange(0, 50)]
+        orders = [generateOrder() for _ in trange(0, 50)]
     
     for order in orders:
         assert hasattr(order, 'orderID')
@@ -106,10 +126,10 @@ def test_random_order_generation(capsys):
             assert hasattr(drink, 'texture')
             assert hasattr(drink, 'shots')
             assert hasattr(drink, 'temperature')
-            assert drink.drink in list(DRINKS.keys())
+            assert drink.drink in [drink['drink'] for drink in DRINKS]
             assert drink.milk in MILKS
             assert drink.texture in TEXTURES
-            assert drink.temperature in TEMPERATURES
+            assert drink.temperature in ['Extra Hot', 'Normal', 'Warm']
             assert all(option in OPTIONS for option in drink.options)
             assert isinstance(drink.shots, int)
     
