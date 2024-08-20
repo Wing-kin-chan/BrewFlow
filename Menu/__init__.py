@@ -1,4 +1,4 @@
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List
 from datetime import date, time
 
@@ -12,6 +12,15 @@ class Drink(BaseModel):
     texture: Optional[str]
     options: List[str]
     customer: Optional[str]
+    identifier: int = Field(default_factory = lambda: 0, init = False)
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        object.__setattr__(self, 'identifier', id(self))
+
+    @property
+    def __id(self):
+        return self.identifier
 
     def __repr__(self):
         if self.customer:
@@ -33,14 +42,6 @@ class Drink(BaseModel):
             result += "No options\n"
 
         return result
-    
-    def __eq__(self, other):
-        if isinstance(other, Drink):
-            return self.__dict__ == other.__dict__
-        return False
-    
-    def __hash__(self):
-        return hash((self.__dict__))
 
 class Order(BaseModel):
     orderID: int
