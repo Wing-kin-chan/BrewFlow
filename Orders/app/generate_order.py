@@ -1,7 +1,6 @@
-from pydantic import BaseModel
-from Orders.app.generate_drink import Drink
-from datetime import datetime, date, time
-from typing import List
+from Menu import Order
+from Orders.app.generate_drink import generateDrink
+from datetime import datetime
 import requests, random
 
 nameAPI_address = 'https://randomuser.me/api/?results=1&inc=name'
@@ -26,32 +25,24 @@ def getCustomerName() -> str|None:
         except requests.exceptions.JSONDecodeError:
             return None
 
-class Order(BaseModel):
-    orderID: int
-    customer: str
-    date: date
-    time: time
-    drinks: List[Drink]
+def generateOrder():
+    customer = getCustomerName()
+    now = datetime.now()
+    order_date = now.date()
+    order_time = now.time()
+    orderID = hash(customer + now.strftime('%H:%M:%S %d/%M/%Y'))
+    seed = random.randint(0, 100)
+    
+    if 15 < seed < 40:
+        drinks = [generateDrink() for _ in range(0, random.randint(1, 3))]
+    if seed < 15:
+        drinks = [generateDrink() for _ in range(0, random.randint(3, 10))]
+    else:
+        drinks = [generateDrink()]
 
-    @staticmethod
-    def generateOrder():
-        customer = getCustomerName()
-        now = datetime.now()
-        order_date = now.date()
-        order_time = now.time()
-        orderID = hash(customer + now.strftime('%H:%M:%S %d/%M/%Y'))
-        seed = random.randint(0, 100)
-        
-        if 15 < seed < 40:
-            drinks = [Drink.generateDrink() for _ in range(0, random.randint(1, 3))]
-        if seed < 15:
-            drinks = [Drink.generateDrink() for _ in range(0, random.randint(3, 10))]
-        else:
-            drinks = [Drink.generateDrink()]
-
-        order = Order(orderID = orderID,
-                      customer = customer,
-                      date = order_date,
-                      time = order_time,
-                      drinks = drinks)
-        return order
+    order = Order(orderID = orderID,
+                    customer = customer,
+                    date = order_date,
+                    time = order_time,
+                    drinks = drinks)
+    return order
