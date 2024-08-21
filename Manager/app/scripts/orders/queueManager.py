@@ -114,7 +114,7 @@ class Queue:
 
         return "".join(output)
 
-    def remove_item_from_lookupTable(self, position: int):
+    def remove_item_from_lookupTable(self, position: int) -> None:
         '''
         When an item is removed at queue position/index N,
         all values of N are purged from the lookup table.
@@ -137,8 +137,10 @@ class Queue:
                     self.lookupTable[key] = set(index-1 if index > i else index for index in indices)
             else:
                 i += 1
+        
+        self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
 
-    def update_lookupTable_on_Batch(self, position: int, milk_type: str):
+    def update_lookupTable_on_Batch(self, position: int, milk_type: str) -> None:
         '''
         Batches are always created immediately after an existing order;
         If Order (O) at index N, has drink A, and A is added to Batch (B),
@@ -153,7 +155,7 @@ class Queue:
             elif v:
                 self.lookupTable[k] = set(i+1 if i > position - 1 else i for i in v)
 
-    def addOrder(self, order: Order):
+    def addOrder(self, order: Order) -> None:
         self.orders.append(order)
         self.totalOrders += 1
         self.totalDrinks += len(order.drinks)
@@ -207,13 +209,33 @@ class Queue:
 
             except KeyError:
                 continue
-
-        logging.debug(f"{self}")
-        logging.debug(f"{self.lookupTable}")
                 
         # Clear any instance of an order that have no drinks from the queue
         self._clean_empty_orders()
 
-    def completeOrder(self, orderID: int):
-        self.orders = [item for item in self.orders if item.orderID != orderID]
-        logging.info(f'Order {orderID} complete.')
+    def completeDrinks(self, drink_identifiers: List[int]) -> None:
+        """
+        Logic to complete one or more drinks and remove it from the preparation list.
+
+        Parameters:
+            - drink_identifiers: List[int] list of drink identifiers that are to be removed from the queue
+        """
+        for order in self.orders:
+            order.drinks = [
+                drink for drink in order.drinks if drink.identifier not in drink_identifiers
+            ]
+        
+        self.totalDrinks -= len(drink_identifiers)
+        self._clean_empty_orders()
+
+    def completeItem(self, index: int) -> None:
+        """
+        Logic to complete an entire Batch or Order and remove it from the preparation list.
+
+        Parameters:
+            - index: int index of the item to be completed.
+        """
+        self.orders.pop(index)
+        self.remove_item_from_lookupTable(index)
+        self.totalDrinks -= len(self.orders[index].drinks)
+        self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))

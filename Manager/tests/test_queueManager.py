@@ -154,6 +154,12 @@ martin_order = Order.model_validate(
     }
 )
 
+flat_white = [drink for drink in martin_order.drinks if drink.drink == 'Flat White'][0]
+oat_cappuccinos = [drink for drink in hannah_order.drinks if drink.drink == 'Cappuccino' and drink.milk == 'Oat']
+soy_cappuccino = [drink for drink in hannah_order.drinks if drink.milk == 'Soy'][0]
+soy_macchiato = [drink for drink in martin_order.drinks if drink.drink == 'Double Macchiato'][0]
+latte = [drink for drink in adam_order.drinks if drink.drink == 'Latte'][0]
+
 def test_queueInitialization(queue):
     assert hasattr(queue, 'orders')
     assert hasattr(queue, 'totalOrders')
@@ -191,12 +197,6 @@ def test_queueAddOrder(queue):
     assert queue.orders[1] == kayleigh_order
 
 def test_queueReorder(queue):
-    flat_white = [drink for drink in martin_order.drinks if drink.drink == 'Flat White'][0]
-    oat_cappuccinos = [drink for drink in hannah_order.drinks if drink.drink == 'Cappuccino' and drink.milk == 'Oat']
-    soy_cappuccino = [drink for drink in hannah_order.drinks if drink.milk == 'Soy'][0]
-    soy_macchiato = [drink for drink in martin_order.drinks if drink.drink == 'Double Macchiato'][0]
-    latte = [drink for drink in adam_order.drinks if drink.drink == 'Latte'][0]
-
     queue.addOrder(hannah_order)
 
     assert len(queue.orders) == 4
@@ -237,4 +237,50 @@ def test_queueReorder(queue):
     assert isinstance(queue.orders[4], Batch)
     assert flat_white and latte in queue.orders[4].drinks
     assert 4 in queue.lookupTable['Full fat_Wet']
-    
+
+def test_completeDrink(queue):
+    # Test completion of one drink from a Batch/Order
+    queue.completeDrinks([soy_cappuccino.identifier])
+    assert soy_macchiato in queue.orders[2].drinks
+    assert 2 in queue.lookupTable['Soy_Dry']
+    assert isinstance(queue.orders[2], Batch)
+    assert len(queue.orders[2].drinks) == 1
+    assert queue.totalDrinks == 7
+    assert queue.totalOrders == 5
+
+    # Test completion of two drinks, from seperate Batches/Orders
+    queue.completeDrinks([oat_cappuccinos[0].identifier, latte.identifier])
+    assert 3 in queue.lookupTable['Oat_Dry']
+    assert 4 in queue.lookupTable['Full fat_Wet']
+    assert isinstance(queue.orders[3], Batch)
+    assert isinstance(queue.orders[4], Batch)
+    assert len(queue.orders[3].drinks) == 1
+    assert len(queue.orders[4].drinks) == 1
+    assert queue.totalDrinks == 5
+    assert queue.totalOrders == 4
+
+    # Test completion of a drink that leaves a Batch/Order with no drinks
+    queue.completeDrinks([jeff_order.drinks[0].identifier])
+    assert queue.totalDrinks == 4
+    assert queue.totalOrders == 3
+    assert 0 in queue.lookupTable['Full fat_Wet']
+    assert 1 in queue.lookupTable['Soy_Dry']
+    assert 2 in queue.lookupTable['Oat_Dry']
+    assert 3 in queue.lookupTable['Full fat_Wet']
+
+def test_completeItem(queue):
+    # Complete Kayleigh's Order and clear it from queue
+    queue.completeItem(0)
+    assert queue.totalDrinks == 3
+    assert queue.totalOrders == 2
+    assert 0 in queue.lookupTable['Soy_Dry']
+    assert 1 in queue.lookupTable['Oat_Dry']
+    assert 2 in queue.lookupTable['Full fat_Wet']
+
+    # Complete a Batch containing Martin's Macchiato, however his flat white is still in queue
+    queue.completeItem(0)
+    assert queue.totalDrinks == 2
+    assert queue.totalOrders == 2
+    assert 0 in queue.lookupTable['Oat_Dry']
+    assert 1 in queue.lookupTable['Full fat_Wet']
+
