@@ -15,6 +15,7 @@ with open(MENU_FILE_PATH, 'r') as f:
 MILKS = data.get('milks', [])
 TEXTURES = data.get('textures', [])
 COMBINATIONS = product(MILKS, TEXTURES)
+SEARCH_DEPTH = data.get('SEARCH_DEPTH')
 
 class Batch:
     '''
@@ -42,7 +43,7 @@ class Batch:
         
         return result
 
-    def add_drink(self, drink: Drink):
+    def add_drink(self, drink: Drink) -> None:
         if not self.milk:
             self.milk = drink.milk
         if not self.texture:
@@ -71,21 +72,26 @@ class Queue:
 
     Workflow queue optimization logic:
         1. Add new order to queue
-        2. For each drink, add the order's position in the queue's order list, 
-           to the relevant milk texture key in the lookup table.
-        3. If there are more than MIN_DRINK_NUMBER_OPT (N) drinks in the queue (queue.totalDrinks),
-           for each drink after the first N drink, starting with the N+1 drink, search for an index with the same
-           milk texture in lookup table. 
-           
-           If a the drink, and drinks at the index can be grouped together into a Batch,
+
+        2. First check inside the order to see if a batch of drinks 
+           with similar milk type and texture can be created. If so create
+           batch immediately after the order.
+
+        3. For each drink that has not been placed in batches from the previous step,
+           search for positions infront of the new order within the queue, for orders or batches
+           containing drinks with the same milk type and texture. Search indexes starting from the
+           index closest to the original order. Indexes included in the search must be greater than
+           MIN_DRINK_NUMBER_OPT (N) positions in the queue (queue.totalDrinks).
+
+        4. If the drink, and drinks at the index can be grouped together into a Batch,
            create a new Batch object at the index in the queue, and move drinks into the Batch instance.
 
            If the drink can't be grouped with drinks at that index, try the next index in the list of indexes under
-           the corresponding milk type and texture in the lookupTable. If all indexes have been tried, keep the drink within
-           the order at its original position in the queue.
+           the corresponding milk type and texture in the lookupTable. If all searchable indexes have been tried, 
+           keep the drink within the order at its original position in the queue.
 
-        4. Update lookup table with new postions should drinks be moved into batches.
-        5. Drinks can only be added to batches, not removed.
+        5. Update lookup table with new postions should drinks be moved into batches.
+           Drinks can only be added to batches, not removed.
     '''
 
     def __init__(self):
@@ -132,9 +138,7 @@ class Queue:
         while i < len(self.orders):
             if not self.orders[i].drinks:
                 self.orders.pop(i)
-
-                for key, indices in self.lookupTable.items():
-                    self.lookupTable[key] = set(index-1 if index > i else index for index in indices)
+                self.remove_item_from_lookupTable(i)               
             else:
                 i += 1
         
@@ -146,7 +150,7 @@ class Queue:
         If Order (O) at index N, has drink A, and A is added to Batch (B),
         orders.index(B) == orders.index(O) + 1.
 
-        Thus if A has an index I in the lookupTable, within the key of A's
+        Thus if A has an index i in the lookupTable, within the key of A's
         corresponding milk type, we need to update A's index to reflect the batch's position.
         '''
         for k, v in self.lookupTable.items():
@@ -157,61 +161,82 @@ class Queue:
 
     def addOrder(self, order: Order) -> None:
         self.orders.append(order)
+        new_order_index = len(self.orders) - 1
         self.totalOrders += 1
         self.totalDrinks += len(order.drinks)
-        original_position = len(self.orders) - 1
-        
-        # Group drinks into batches if possible
-        for drink in order.drinks[:]:
-            milk_type_texture = f'{drink.milk}_{drink.texture}'
-            batch_found = False
 
-            # Check if drink can be added to existing batch
-            try:
-                indexes = [i for i in self.lookupTable[milk_type_texture] if 1 < i <= original_position]
-                indexes.sort(reverse = True)
-                #Check for batches closest to the position of original order first
-                for index in indexes:
-                    # Check if drink can be added to a batch
-                    if isinstance(self.orders[index], Batch):
-                        batch = self.orders[index]
-                        if batch.can_add_drink(drink):
-                            batch.add_drink(drink)
-                            self.orders[original_position].drinks.remove(drink)
-                            batch_found = True
-                
-                # Check if a new batch can be created
-                    elif isinstance(self.orders[index], Order):
-                        existing_order = self.orders[index]
-                        similar_drinks = [
-                            d for d in existing_order.drinks if d.milk == drink.milk and 
-                            d.texture == drink.texture and
-                            id(d) != id(drink)
-                        ]
+        # If order has mutiple drinks, you may want to batch drinks with others
+        # near the original order's position, else if it a single drink
+        # you can move the individual forward in the queue any amount
+        search_depth = new_order_index
 
-                        if similar_drinks:
-                            batch = Batch()
-                            for d in similar_drinks + [drink]:
-                                batch.add_drink(d)
-                            batch.volume = sum(d.milk_volume for d in batch.drinks)
-                            self.orders[-1].drinks.remove(drink)
-                            self.orders.insert(index + 1, batch)
-                            self.update_lookupTable_on_Batch(index + 1, milk_type_texture)
-                            batch_found = True
-                        
-                        # Delete similar drinks from existing order as they are in batch
-                        for d in similar_drinks:
-                            existing_order.drinks.remove(d)
+        # Prioritize creating batches of same milk type within the order,
+        # by searching inside order.drinks first.
+        if len(order.drinks) > 1:
+            grouped_drinks = order.group_drinks()
+            search_depth = SEARCH_DEPTH
+            if grouped_drinks:
+                for group in grouped_drinks:
+                    if len(group) > 1:
+                        # Create batches of drinks with same milk type
+                        batch = Batch()
+                        list(map(lambda drink: batch.add_drink(drink), group)) # Add drinks to batch
+                        list(map(lambda drink: order.drinks.remove(drink), group)) # Remove drink from original order
+                        self.orders.insert(new_order_index, batch)
+                        try:
+                            self.lookupTable[f"{batch.milk}_{batch.texture}"].add(new_order_index)
+                        except KeyError:
+                            continue
+                        new_order_index += 1
+                    else:
+                        continue
 
-                # If drink can't be allocated to a batch, keep its position in order and index it
-                if not batch_found:
-                    self.lookupTable[milk_type_texture].add(original_position)
-
-            except KeyError:
+        # For remaining drinks, have option to search for orders ahead
+        for drink in order.drinks:
+            if drink.milk == "No Milk":
                 continue
+            milk_type = f"{drink.milk}_{drink.texture}"
+            batch_found = False
+            indexes = [
+                i for i in self.lookupTable[milk_type] if 1 < i and 
+                new_order_index - search_depth <= i < new_order_index 
+                ]
+            
+            for index in sorted(indexes, reverse = True):
+                # Check if drink can be added to an existing batch
+                if isinstance(self.orders[index], Batch):
+                    batch: Batch = self.orders[index]
+                    if batch.can_add_drink(drink):
+                        batch.add_drink(drink)
+                        order.drinks.remove(drink)
+                        batch.found = True
+                        break
                 
-        # Clear any instance of an order that have no drinks from the queue
+                # Check if drink can be batched with a drink from existing order
+                elif isinstance(self.orders[index], Order):
+                    existing_order: Order = self.orders[index]
+                    similar_drinks = [
+                        d for d in existing_order.drinks if d.milk == drink.milk and
+                        d.texture == drink.texture
+                    ]
+
+                    if similar_drinks:
+                        batch = Batch()
+                        for d in similar_drinks + [drink]:
+                            batch.add_drink(d)
+                        list(map(lambda d: existing_order.drinks.remove(d), similar_drinks))
+                        order.drinks.remove(drink)
+                        self.orders.insert(index + 1, batch)
+                        new_order_index += 1
+                        self.update_lookupTable_on_Batch(index + 1, milk_type)
+                        batch_found = True
+                        break
+
+            if not batch_found:
+                self.lookupTable[milk_type].add(new_order_index)
+        
         self._clean_empty_orders()
+
 
     def completeDrinks(self, drink_identifiers: List[int]) -> None:
         """
@@ -235,7 +260,7 @@ class Queue:
         Parameters:
             - index: int index of the item to be completed.
         """
+        self.totalDrinks -= len(self.orders[index].drinks)
         self.orders.pop(index)
         self.remove_item_from_lookupTable(index)
-        self.totalDrinks -= len(self.orders[index].drinks)
         self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
