@@ -2,7 +2,9 @@ name: Python Tests
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - QueueManager.v2
   pull_request:
     branches: [ main ]
 
@@ -62,7 +64,7 @@ jobs:
         run: |
           pytest Orders/tests/tests.py
   
-  test-WaiterAPI:
+  test-fetchOrder:
     runs-on: ubuntu-latest
     needs: Build
     steps:
@@ -113,6 +115,16 @@ jobs:
             python -m pip install --upgrade pip
             pip install flake8 pytest
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Test queue manager
-        run: pytest Manager/tests/test_queueManager.py
+      - name: Start FastAPI Server
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
+        env:
+          PORT: 8000
+      - name: Test queueManager
+        env:
+          BASEURL: http://127.0.0.1:8000
+        run: |
+          sleep 5 #Wait for Uvicorn server to start
+          pytest -s Manager/tests/test_queueManager.py
   

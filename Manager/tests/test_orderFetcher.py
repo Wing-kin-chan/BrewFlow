@@ -1,10 +1,6 @@
 import pytest
 from datetime import date, time
 from Manager.app.scripts.orders import fetchOrder
-from fastapi.testclient import TestClient
-from Orders.main import app
-
-client = TestClient(app)
 
 def test_fetchOrders():
     order = fetchOrder.fetchOrder()

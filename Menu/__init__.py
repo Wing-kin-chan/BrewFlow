@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List
 from datetime import date, time
+from collections import defaultdict
 
 class Drink(BaseModel):
     orderID: Optional[int]
@@ -17,10 +18,6 @@ class Drink(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         object.__setattr__(self, 'identifier', id(self))
-
-    @property
-    def __id(self):
-        return self.identifier
 
     def __repr__(self):
         if self.customer:
@@ -79,3 +76,14 @@ class Order(BaseModel):
             if drink.get('orderID') is None:
                 drink['orderID'] = orderID
         return values
+
+    def group_drinks(self) -> List[List[Drink]]:
+        drink_groups = defaultdict(list)
+
+        for drink in self.drinks:
+            if drink.milk:
+                key = (drink.milk, drink.texture)
+                drink_groups[key].append(drink)
+        
+        return list(drink_groups.values())
+    

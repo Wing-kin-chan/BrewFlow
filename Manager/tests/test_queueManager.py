@@ -1,22 +1,37 @@
 import pytest
-from Manager.app.scripts.orders.queueManager import *
-from Menu import Order
 from typing import List
+from tqdm import trange
 from datetime import datetime
+import logging, copy, sys
+
+from Manager.app.scripts.orders.queueManager import *
+from Manager.app.scripts.orders import fetchOrder
+from Menu import Order
 
 @pytest.fixture(scope = 'module')
 def queue():
     return Queue()
 
+def pytest_configure(config):
+    logging.basicConfig(level = logging.INFO)
+
+def is_all_empty_except_keys(dictionary: dict, except_keys: list):
+    for k, v in dictionary.items():
+        if k not in except_keys and v:
+            return False
+    return True
+
+# Random drinks, and orders for testing
+logging.info("Generating random orders")
+orders = [fetchOrder.fetchOrder() for _ in trange(0, 50, file = sys.stdout)]
+
 date = datetime.now().date()
 time = datetime.now().time()
 
-# Random drinks, and orders for testing
-# Order takes in dictionary rather than instance of Drink
 jeff_drink = {
     'orderID': 1,
     'drink': 'double_espresso',
-    'milk': 'No milk',
+    'milk': 'No Milk',
     'milk_volume': 0,
     'shots': 2,
     'temperature': None,
@@ -119,46 +134,10 @@ hannah_order = Order.model_validate(
     }
 )
 
-martin_drinks = [
-    {
-        'orderID': 34567,
-        'drink': 'Flat White',
-        'milk': 'Full fat',
-        'shots': 2,
-        'milk_volume': 1,
-        'temperature': None,
-        'texture': 'Wet',
-        'options': [],
-        'customer': 'Martin'
-    },
-    {
-        'orderID': 34567,
-        'drink': 'Double Macchiato',
-        'milk': 'Soy',
-        'milk_volume': 0.5,
-        'shots': 2,
-        'temperature': None,
-        'texture': 'Dry',
-        'options': [],
-        'customer': 'Martin'
-    }
-]
-
-martin_order = Order.model_validate(
-    {
-        'orderID': 34567,
-        'customer': 'Martin',
-        'date': date,
-        'time': time,
-        'drinks': martin_drinks
-    }
-)
-
-flat_white = [drink for drink in martin_order.drinks if drink.drink == 'Flat White'][0]
 oat_cappuccinos = [drink for drink in hannah_order.drinks if drink.drink == 'Cappuccino' and drink.milk == 'Oat']
 soy_cappuccino = [drink for drink in hannah_order.drinks if drink.milk == 'Soy'][0]
-soy_macchiato = [drink for drink in martin_order.drinks if drink.drink == 'Double Macchiato'][0]
 latte = [drink for drink in adam_order.drinks if drink.drink == 'Latte'][0]
+flat_white = [drink for drink in kayleigh_order.drinks if drink.drink == 'Flat White'][0]
 
 def test_queueInitialization(queue):
     assert hasattr(queue, 'orders')
@@ -177,110 +156,114 @@ def test_queueInitialization(queue):
     assert isinstance(queue.lookupTable, dict)
 
 def test_queueAddOrder(queue):
-    queue.addOrder(jeff_order)
+    order = [o for o in orders if o.drinks[0].milk != "No Milk" and
+             len(o.drinks) == 1][0]
+    milk_type = f"{order.drinks[0].milk}_{order.drinks[0].texture}"
+    queue.addOrder(order)
 
     assert len(queue.orders) == 1
     assert queue.totalOrders == 1
     assert queue.totalDrinks == 1
     assert isinstance(queue.orders[0], Order)
-    assert queue.orders[0] == jeff_order
-    
-    queue.addOrder(kayleigh_order)
+    assert queue.orders[0] == order
+    assert 0 in queue.lookupTable[milk_type]
 
-    assert len(queue.orders) == 2
-    assert queue.totalOrders == 2
-    assert queue.totalDrinks == 2
-    assert isinstance(queue.orders[1], Order)
-    assert 1 in queue.lookupTable['Full fat_Wet']
-
-    assert queue.orders[0] == jeff_order
-    assert queue.orders[1] == kayleigh_order
-
-def test_queueReorder(queue):
-    queue.addOrder(hannah_order)
-
-    assert len(queue.orders) == 4
-    assert queue.totalOrders == 3
-    assert queue.totalDrinks == 5
-    assert queue.orders[0] == jeff_order
-    assert queue.orders[1] == kayleigh_order
-
-    assert isinstance(queue.orders[2], Order)
-    assert soy_cappuccino in queue.orders[2].drinks
-    assert 2 in queue.lookupTable['Soy_Dry']
-
-    assert isinstance(queue.orders[3], Batch)
-    assert all(drink in queue.orders[3].drinks for drink in oat_cappuccinos)
-    assert sum(drink.milk_volume for drink in queue.orders[3].drinks) == queue.orders[3].volume
-    assert 3 in queue.lookupTable['Oat_Dry']
-    
-    queue.addOrder(adam_order)
-
-    assert len(queue.orders) == 5
-    assert queue.totalOrders == 4
-    assert queue.totalDrinks == 6
-
-    assert isinstance(queue.orders[4], Order)
-    assert queue.orders[4] == adam_order
-    assert 4 in queue.lookupTable['Full fat_Wet']
-
-    queue.addOrder(martin_order)
-
-    assert len(queue.orders) == 5
-    assert queue.totalOrders == 5
-    assert queue.totalDrinks == 8
-
-    assert isinstance(queue.orders[2], Batch)
-    assert soy_cappuccino and soy_macchiato in queue.orders[2].drinks
-    assert 2 in queue.lookupTable['Soy_Dry']
-
-    assert isinstance(queue.orders[4], Batch)
-    assert flat_white and latte in queue.orders[4].drinks
-    assert 4 in queue.lookupTable['Full fat_Wet']
-
-def test_completeDrink(queue):
-    # Test completion of one drink from a Batch/Order
-    queue.completeDrinks([soy_cappuccino.identifier])
-    assert soy_macchiato in queue.orders[2].drinks
-    assert 2 in queue.lookupTable['Soy_Dry']
-    assert isinstance(queue.orders[2], Batch)
-    assert len(queue.orders[2].drinks) == 1
-    assert queue.totalDrinks == 7
-    assert queue.totalOrders == 5
-
-    # Test completion of two drinks, from seperate Batches/Orders
-    queue.completeDrinks([oat_cappuccinos[0].identifier, latte.identifier])
-    assert 3 in queue.lookupTable['Oat_Dry']
-    assert 4 in queue.lookupTable['Full fat_Wet']
-    assert isinstance(queue.orders[3], Batch)
-    assert isinstance(queue.orders[4], Batch)
-    assert len(queue.orders[3].drinks) == 1
-    assert len(queue.orders[4].drinks) == 1
-    assert queue.totalDrinks == 5
-    assert queue.totalOrders == 4
-
-    # Test completion of a drink that leaves a Batch/Order with no drinks
-    queue.completeDrinks([jeff_order.drinks[0].identifier])
-    assert queue.totalDrinks == 4
-    assert queue.totalOrders == 3
-    assert 0 in queue.lookupTable['Full fat_Wet']
-    assert 1 in queue.lookupTable['Soy_Dry']
-    assert 2 in queue.lookupTable['Oat_Dry']
-    assert 3 in queue.lookupTable['Full fat_Wet']
-
-def test_completeItem(queue):
-    # Complete Kayleigh's Order and clear it from queue
+def test_queueCompleteItem(queue):
     queue.completeItem(0)
+
+    assert len(queue.orders) == 0
+    assert queue.totalOrders == 0
+    assert queue.totalDrinks == 0
+    assert all(not value for value in queue.lookupTable.values())
+
+def test_orderBatching(queue):
+    queue.addOrder(jeff_order)
+
+    assert len(queue.orders) == 1
+    assert queue.totalDrinks == 1
+    assert queue.totalOrders == 1
+    assert isinstance(queue.orders[0], Order)
+    assert queue.orders[0] == jeff_order
+
+    queue.addOrder(kayleigh_order)
+    assert len(queue.orders) == 2
+    assert queue.totalDrinks == 2
+    assert queue.totalOrders == 2
+    assert isinstance(queue.orders[1], Order)
+    assert queue.orders[1] == kayleigh_order
+
+    queue.addOrder(hannah_order)
+    assert len(queue.orders) == 4
+    assert queue.totalDrinks == 5
+    assert queue.totalOrders == 3
+    assert isinstance(queue.orders[2], Batch)
+    assert all(drink in queue.orders[2].drinks for drink in oat_cappuccinos)
+    assert 2 in queue.lookupTable['Oat_Dry']
+    assert isinstance(queue.orders[3], Order)
+    assert soy_cappuccino in queue.orders[3].drinks
+    assert 3 in queue.lookupTable['Soy_Dry']
+
+def test_completeDrinks(queue):
+    queue.completeDrinks([soy_cappuccino.identifier, jeff_order.drinks[0].identifier])
     assert queue.totalDrinks == 3
     assert queue.totalOrders == 2
-    assert 0 in queue.lookupTable['Soy_Dry']
-    assert 1 in queue.lookupTable['Oat_Dry']
-    assert 2 in queue.lookupTable['Full fat_Wet']
 
-    # Complete a Batch containing Martin's Macchiato, however his flat white is still in queue
+    assert isinstance(queue.orders[0], Order)
+    assert isinstance(queue.orders[1], Batch)
+    assert queue.orders[0] == kayleigh_order
+    assert all(drink in queue.orders[1].drinks for drink in oat_cappuccinos)
+    assert 0 in queue.lookupTable["Full fat_Wet"]
+    assert 1 in queue.lookupTable["Oat_Dry"]
+    assert not queue.lookupTable["Soy_Dry"]
+
+def test_crossOrderBatching(queue):
     queue.completeItem(0)
-    assert queue.totalDrinks == 2
-    assert queue.totalOrders == 2
-    assert 0 in queue.lookupTable['Oat_Dry']
-    assert 1 in queue.lookupTable['Full fat_Wet']
+    queue.completeItem(0)
 
+    assert queue.totalDrinks == 0
+    assert queue.totalOrders == 0
+    assert len(queue.orders) == 0
+    assert all(not value for value in queue.lookupTable.values())
+
+    black_coffees = [o for o in orders if o.drinks[0].milk == "No Milk" and
+             len(o.drinks) == 1]
+    num_orders = len(black_coffees)
+    for order in black_coffees:
+        queue.addOrder(order)
+    assert len(queue.orders) == num_orders
+    assert queue.totalOrders == num_orders
+    assert queue.totalDrinks == num_orders
+
+    queue.addOrder(adam_order)
+    assert isinstance(queue.orders[num_orders], Order)
+    assert queue.orders[num_orders] == adam_order
+    assert len(queue.orders) == num_orders + 1
+    assert queue.totalDrinks == num_orders + 1
+    assert queue.totalOrders == num_orders + 1
+    assert num_orders in queue.lookupTable["Full fat_Wet"]
+
+    queue.addOrder(kayleigh_order)
+    assert isinstance(queue.orders[num_orders], Batch)
+    assert latte and flat_white in queue.orders[num_orders].drinks
+    assert len(queue.orders) == num_orders + 1
+    assert queue.totalDrinks == num_orders + 2
+    assert queue.totalOrders == num_orders + 2
+    assert num_orders in queue.lookupTable["Full fat_Wet"]
+    assert is_all_empty_except_keys(queue.lookupTable, ["Full fat_Wet"])
+
+def test_edgeCases(queue, capsys):
+    with capsys.disabled():
+        queue_prior = queue
+        queue_next = queue
+        for order in orders:
+            copy_order = copy.deepcopy(order)
+            try:
+                queue_next.addOrder(copy_order)
+                assert all(order.drinks for order in queue_next.orders)
+                queue_prior = queue_next
+            except Exception as e:
+                logging.error(f"Error: {e}")
+                logging.error(f"Queue Prior State: \n {queue_prior}")
+                logging.error(f"Adding order: \n {order}")
+                logging.error(f"Queue State On addOrder: \n {queue_next}")
+                raise Exception(e)
