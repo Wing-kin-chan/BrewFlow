@@ -1,6 +1,6 @@
 import pytest
 from datetime import date, time
-from Manager.app.scripts.orders import fetchOrder
+from Manager.app.scripts.queueManager import fetchOrder
 
 def test_fetchOrders():
     order = fetchOrder.fetchOrder()

@@ -4,8 +4,8 @@ from tqdm import trange
 from datetime import datetime
 import logging, copy, sys
 
-from Manager.app.scripts.orders.queueManager import *
-from Manager.app.scripts.orders import fetchOrder
+from Manager.app.scripts.queueManager import Queue, Batch
+from Manager.app.scripts.queueManager import fetchOrder
 from Menu import Order
 
 @pytest.fixture(scope = 'module')
@@ -51,7 +51,7 @@ jeff_order = Order.model_validate(
 kayleigh_drink = {
     'orderID': 2,
     'drink': 'Flat White',
-    'milk': 'Full fat',
+    'milk': 'Whole',
     'milk_volume': 1,
     'shots': 2,
     'temperature': None,
@@ -71,7 +71,7 @@ kayleigh_order = Order.model_validate(
 adam_drink = {
     'orderID': 12345,
     'drink': 'Latte',
-    'milk': 'Full fat',
+    'milk': 'Whole',
     'milk_volume': 2,
     'shots': 2,
     'temperature': None,
@@ -212,7 +212,7 @@ def test_completeDrinks(queue):
     assert isinstance(queue.orders[1], Batch)
     assert queue.orders[0] == kayleigh_order
     assert all(drink in queue.orders[1].drinks for drink in oat_cappuccinos)
-    assert 0 in queue.lookupTable["Full fat_Wet"]
+    assert 0 in queue.lookupTable["Whole_Wet"]
     assert 1 in queue.lookupTable["Oat_Dry"]
     assert not queue.lookupTable["Soy_Dry"]
 
@@ -240,7 +240,7 @@ def test_crossOrderBatching(queue):
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 1
     assert queue.totalOrders == num_orders + 1
-    assert num_orders in queue.lookupTable["Full fat_Wet"]
+    assert num_orders in queue.lookupTable["Whole_Wet"]
 
     queue.addOrder(kayleigh_order)
     assert isinstance(queue.orders[num_orders], Batch)
@@ -248,8 +248,8 @@ def test_crossOrderBatching(queue):
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 2
     assert queue.totalOrders == num_orders + 2
-    assert num_orders in queue.lookupTable["Full fat_Wet"]
-    assert is_all_empty_except_keys(queue.lookupTable, ["Full fat_Wet"])
+    assert num_orders in queue.lookupTable["Whole_Wet"]
+    assert is_all_empty_except_keys(queue.lookupTable, ["Whole_Wet"])
 
 def test_edgeCases(queue, capsys):
     with capsys.disabled():
