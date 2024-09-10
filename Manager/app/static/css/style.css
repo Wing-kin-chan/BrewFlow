@@ -1,0 +1,215 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #282727;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 100%;
+    background-color: #282727;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Styling for page */
+
+.header {
+    background-color: #202020;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.complete-button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #202020;
+    color: white;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.total-orders {
+    color: #fff;
+    font-size: 20px;
+}
+
+.order-count {
+    font-weight: bold;
+}
+
+/* Style for main order list area */
+
+.order-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr;
+    grid-auto-columns: minmax(300px, 1fr);
+    align-items: start;
+    gap: 10px;
+    min-height: 70vh;
+    max-height: 70vh;
+    overflow-y: hidden;
+    overflow-x: auto;
+    background-color: #f5f5f5;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.order-batch-card {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    break-inside: avoid;
+    max-width: 250px;
+    min-width: 250px;
+    height: auto;
+    min-height: 100px;
+
+    border: 1px solid #000000;
+    border-radius: 8px;
+    background-color:#fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.order-batch-card.selected {
+    background-color: #abaaaa;
+}
+
+.order-batch-card-header {
+    width: 100%;
+    min-height: 15%;
+    max-height: 15%;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    border-bottom: 1px solid #000000;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    align-content: center;
+    text-align: center;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 500;
+    align-content: center;
+    text-align: center;
+}
+
+h6 {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 100;
+    align-content: center;
+    text-align: center;
+}
+
+.order-batch-card-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+ul {
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    margin: 5px 0;
+}
+
+.drink-card {
+    width: 98%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    display: block;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    overflow: none;
+}
+
+.drink-card.selected {
+    background-color: #abaaaa;
+}
+
+.drink-card-header {
+    display: block;
+    text-align: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom: 1px solid #000000;
+}
+
+.drink-name {
+    font-weight: 520;
+}
+
+.drink-card-body {
+    display: block;
+}
+
+.drink-card-text-info {
+    list-style: none;
+    display: block;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0;
+    padding: 5px;
+}
+
+.drink-card-text-info p {
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+}
