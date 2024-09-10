@@ -134,7 +134,7 @@ def test_random_order_generation(capsys):
             assert isinstance(drink.shots, int)
     
 def test_getOrder():
-    response = client.get('/order')
+    response = client.get('/random_order')
     assert response.status_code == 200
     data = json.loads(response.json())
 
