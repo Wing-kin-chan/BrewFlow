@@ -74,7 +74,7 @@
         }
     ],
     "milks": [
-        "Full fat",
+        "Whole",
         "Semi-skimmed",
         "Oat",
         "Soy"
@@ -96,5 +96,13 @@
         "Chocolate",
         "Cinnamon"
     ],
-    "SEARCH_DEPTH": 1
+    "SEARCH_DEPTH": 1,
+    "MILK_COLORS": {
+        "Whole": "orangered",
+        "Semi-skimmed": "orangered",
+        "Oat": "aliceblue",
+        "Soy": "gold"
+    },
+    "ADDRESS": "127.0.0.1",
+    "PORT": "8080"
 }
