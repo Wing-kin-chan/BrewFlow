@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrewFlow</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/js/index.js"></script>
+</head>
+<style>
+    {% for key, color in colors.items() %}
+        .{{ key }} {
+            background-color: {{ color }};
+        }
+    {% endfor %}
+</style>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Drink Orders</h1>
+            <form action="/complete" method="post" id="completeForm">
+                <input type="hidden" name="item_index" id="itemIndexInput">
+                <input type="hidden" name="drink_identifiers" id="drinkIdentifiersInput">
+                <button class="complete-button">Complete Selected</button>
+            </form>  
+        </header>
+        <main class="order-list" id="orderList" >
+            {% for item in queue.orders %}
+                <div class="order-batch-card" id="order-{{ loop.index0 }}" onclick="selectOrder('{{ loop.index0 }}', event)">
+                    {% if item.__class__.__name__ == 'Batch' %}
+                        <div class="order-batch-card-header">
+                            <h2>{{ item.milk.rstrip('Milk') }} Milk Batch</h2>
+                        </div>
+                    {% else %}
+                        <div class="order-batch-card-header">
+                            <h2>Order</h2>
+                            <h3>{{ item.customer }}</h3>
+                            <h6>{{ item.time }}</h6>
+                        </div>
+                    {% endif %}
+                    <div class="order-batch-card-body">
+                        <ul>
+                        {% for drink in item.drinks %}
+                            <li>
+                                <div class="drink-card" id="drink-{{ drink.identifier }}" onclick="selectDrink('{{ drink.identifier}}', event)">
+                                    <div class="drink-card-header {{ drink.milk }}">
+                                        <span class="drink-name">{{ drink.drink }}</span>
+                                        {% if item.__class__.__name__ == 'Batch' %}
+                                            <span class="customer-name">{{ drink.customer }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="drink-card-body">
+                                        <ul>
+                                            <li class="drink-card-text-info">
+                                                <p>{{ drink.milk.rstrip('Milk') }} Milk</p>
+                                                {% for option in drink.options %}
+                                                    <p>{{ option }}</p>
+                                                {% endfor %}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </main>
+        <footer class="footer">
+            <div class="footer-buttons">
+                <button class="footer-button">Configuration</button>
+                <button class="footer-button">Recall</button>
+            </div>
+            <div class="total-orders">
+                Total Orders: <span class="order-count">{{ queue.totalOrders }}</span>
+            </div>
+        </footer>
+    </div>
+<script>
+    document.getElementById('orderList').addEventListener('click', function(event) {
+    if (!event.target.closest('.order-batch-card') && !event.target.closest('.drink-card')) {
+        deselectAll();
+    }
+});
+</script>
+</body>
+</html>

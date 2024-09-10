@@ -4,7 +4,7 @@ import logging
 
 logging.basicConfig(level = logging.DEBUG)
 
-orderAPI_endpoint = 'http://127.0.0.1:8000/order'
+orderAPI_endpoint = 'http://127.0.0.1:8000/random_order'
 
 def fetchOrder() -> Order|None:
     '''Returns an order that is randomly generated from the /order HTTP endpoint.'''

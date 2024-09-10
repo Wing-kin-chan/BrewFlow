@@ -1,5 +1,6 @@
 from Menu import Drink, Order
-from typing import List, Set
+from pydantic import BaseModel
+from typing import List, Set, Union
 from itertools import product
 import logging, json, os
 
@@ -17,7 +18,7 @@ TEXTURES = data.get('textures', [])
 COMBINATIONS = product(MILKS, TEXTURES)
 SEARCH_DEPTH = data.get('SEARCH_DEPTH')
 
-class Batch:
+class Batch(BaseModel):
     '''
     Class to hold drinks that can be made at the same time.
 
@@ -27,12 +28,10 @@ class Batch:
     - texture: str (default None) - String to dictate the milk texture
     - volume: float - The current volume of milk the batch requires
     '''
-
-    def __init__(self):
-        self.drinks: List[Drink] = []
-        self.milk: str|None = None
-        self.texture: str|None = None
-        self.volume: float = 0
+    drinks: List[Drink] = []
+    milk: Union[str, None] = None
+    texture: Union[str, None] = None
+    volume: float = 0.0
 
     def __repr__(self):
         result = "Batch Instance\n"
@@ -209,7 +208,7 @@ class Queue:
                     if batch.can_add_drink(drink):
                         batch.add_drink(drink)
                         order.drinks.remove(drink)
-                        batch.found = True
+                        batch_found = True
                         break
                 
                 # Check if drink can be batched with a drink from existing order
