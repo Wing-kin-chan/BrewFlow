@@ -34,12 +34,21 @@ function updateOrderList(queue, totalOrders) {
         orderCard.id = `order-${orderIndex}`;
         orderCard.setAttribute('onclick', `selectOrder(${orderIndex}, event)`);
 
-        let orderHeaderHTML = `
-            <div class="order-batch-card-header">
-                <h2>Order</h2>
-                <h3>${order.customer}</h3>
-                <h6>${order.time}</h6>
-            </div>`;
+        let orderHeaderHTML = '';
+        if (order.volume) {
+            const milkType = order.milk.replace('Milk', '');
+            orderHeaderHTML = `
+                <div class="order-batch-card-header">
+                    <h2>${milkType} Milk Batch</h2>
+                </div>`;
+        } else {
+            orderHeaderHTML = `
+                <div class="order-batch-card-header">
+                    <h2>Order</h2>
+                    <h3>${order.customer}</h3>
+                    <h6>${order.time}</h6>
+                </div>`;
+        };
 
         let orderBodyHTML = '<div class="order-batch-card-body"><ul>';
 
@@ -49,11 +58,18 @@ function updateOrderList(queue, totalOrders) {
                 drinkOptionsHTML += `<p>${option}</p>`;
             });
 
+            let drinkCustomerHTML = '';
+            if (order.volume) {
+                // If it's a Batch, display the customer's name on the drink card
+                drinkCustomerHTML = `<span class="customer-name">${drink.customer}</span>`;
+            }
+
             const drinkHTML = `
                 <li>
                     <div class="drink-card" id="drink-${drink.identifier}" onclick="selectDrink(${drink.identifier}, event)">
                         <div class="drink-card-header ${drink.milk}">
                             <span class="drink-name">${drink.drink}</span>
+                            ${drinkCustomerHTML}
                         </div>
                         <div class="drink-card-body">
                             <ul>
