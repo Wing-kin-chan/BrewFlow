@@ -66,7 +66,6 @@ async def receiveData(request: Request):
         "orders": [order.model_dump_json() for order in queue.orders],
         "totalOrders": queue.totalOrders,
     }
-    print(f'Broadcasting data: {json.dumps(queue_data)}')
     await connectionManager.broadcast(json.dumps(queue_data))
 
 
