@@ -39,8 +39,20 @@ async def index(request: Request):
         context = {
             "request": request, 
             "queue": queue,
-            "colors": MILK_COLORS}
+            "colors": MILK_COLORS
+            }
         )
+
+@app.get("/history", response_class = HTMLResponse)
+async def history(request: Request):
+    return templates.TemplateResponse(
+        "history.html",
+        context = {
+            "request": request,
+            "history": queue.getCompletedItems(),
+            "colors": MILK_COLORS
+        }
+    )
 
 @app.websocket("/newOrder")
 async def newOrder(websocket: WebSocket):
