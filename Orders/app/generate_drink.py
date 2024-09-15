@@ -57,5 +57,6 @@ def generateDrink() -> dict:
 
     drink_choice['orderID'] = None
     drink_choice['customer'] = None
+    drink_choice['timeComplete'] = None
 
     return drink_choice
