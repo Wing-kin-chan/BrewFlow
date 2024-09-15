@@ -50,7 +50,8 @@ async def history(request: Request):
         context = {
             "request": request,
             "history": queue.getCompletedItems(),
-            "colors": MILK_COLORS
+            "colors": MILK_COLORS,
+            "totalOrders": queue.OrdersComplete
         }
     )
 
