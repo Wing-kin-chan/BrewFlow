@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - QueueManager.v2
+      - QueueManager.v3
   pull_request:
     branches: [ main ]
 
