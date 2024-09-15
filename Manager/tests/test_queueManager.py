@@ -37,15 +37,17 @@ jeff_drink = {
     'temperature': None,
     'texture': None,
     'options': [],
-    'customer': 'Jeff'
+    'customer': 'Jeff',
+    'timeComplete': None
 }
 
 jeff_order = Order.model_validate(
     {'orderID': 1,
      'date': date,
-     'time': time,
+     'timeReceived': time,
      'customer': 'Jeff',
-     'drinks':[jeff_drink]}
+     'drinks':[jeff_drink],
+     'timeComplete': None}
 )
 
 kayleigh_drink = {
@@ -57,15 +59,17 @@ kayleigh_drink = {
     'temperature': None,
     'texture': 'Wet',
     'options': [],
-    'customer': 'Kayleigh'
+    'customer': 'Kayleigh',
+    'timeComplete': None
 }
 
 kayleigh_order = Order.model_validate(
     {'orderID': 2,
      'date': date,
-     'time': time,
+     'timeReceived': time,
      'customer': 'Kayleigh',
-     'drinks':[kayleigh_drink]}
+     'drinks':[kayleigh_drink],
+     'timeComplete': None}
 )
 
 adam_drink = {
@@ -77,15 +81,17 @@ adam_drink = {
     'temperature': None,
     'texture': 'Wet',
     'options': [],
-    'customer': 'Adam'
+    'customer': 'Adam',
+    'timeComplete': None
 }
 
 adam_order = Order.model_validate(
     {'orderID': 12345,
      'date': date,
-     'time': time,
+     'timeReceived': time,
      'customer': 'Adam',
-     'drinks':[adam_drink]}
+     'drinks':[adam_drink],
+     'timeComplete': None}
 )
 
 hannah_drinks = [
@@ -98,7 +104,8 @@ hannah_drinks = [
         'temperature': None,
         'texture': 'Dry',
         'options': [],
-        'customer': 'Hannah'
+        'customer': 'Hannah',
+        'timeComplete': None
     },
     {
         'orderID': 23456,
@@ -109,7 +116,8 @@ hannah_drinks = [
         'temperature': None,
         'texture': 'Dry',
         'options': [],
-        'customer': 'Hannah'
+        'customer': 'Hannah',
+        'timeComplete': None
     },
     {
         'orderID': 23456,
@@ -120,7 +128,8 @@ hannah_drinks = [
         'temperature': None,
         'texture': 'Dry',
         'options': [],
-        'customer': 'Hannah'
+        'customer': 'Hannah',
+        'timeComplete': None
     }
 ]
 
@@ -129,8 +138,9 @@ hannah_order = Order.model_validate(
     'orderID': 23456,
     'customer': 'Hannah',
     'date': date,
-    'time': time,
-    'drinks': hannah_drinks
+    'timeReceived': time,
+    'drinks': hannah_drinks,
+    'timeComplete': None
     }
 )
 
@@ -146,9 +156,11 @@ def test_queueInitialization(queue):
     assert hasattr(queue, 'OrdersComplete')
     assert hasattr(queue, 'DrinksComplete')
     assert hasattr(queue, 'lookupTable')
+    assert hasattr(queue, 'orderHistory')
 
     assert len(queue.orders) == 0
     assert isinstance(queue.orders, List)
+    assert isinstance(queue.orderHistory, List)
     assert isinstance(queue.totalOrders, int)
     assert isinstance(queue.totalDrinks, int)
     assert isinstance(queue.OrdersComplete, int)
@@ -162,15 +174,23 @@ def test_queueAddOrder(queue):
     queue.addOrder(order)
 
     assert len(queue.orders) == 1
+    assert len(queue.orderHistory) == 1
     assert queue.totalOrders == 1
     assert queue.totalDrinks == 1
     assert isinstance(queue.orders[0], Order)
+    assert isinstance(queue.orderHistory[0], Order)
     assert queue.orders[0] == order
+    assert queue.orderHistory[0] == order
     assert 0 in queue.lookupTable[milk_type]
 
 def test_queueCompleteItem(queue):
+    assert queue.orderHistory[0].timeComplete is None
+    assert queue.orderHistory[0].drinks[0].timeComplete is None
+
     queue.completeItem(0)
 
+    assert queue.orderHistory[0].timeComplete is not None
+    assert queue.orderHistory[0].drinks[0].timeComplete is not None
     assert len(queue.orders) == 0
     assert queue.totalOrders == 0
     assert queue.totalDrinks == 0
@@ -184,6 +204,7 @@ def test_orderBatching(queue):
     assert queue.totalOrders == 1
     assert isinstance(queue.orders[0], Order)
     assert queue.orders[0] == jeff_order
+    assert queue.orderHistory[0] == jeff_order
 
     queue.addOrder(kayleigh_order)
     assert len(queue.orders) == 2
@@ -191,7 +212,10 @@ def test_orderBatching(queue):
     assert queue.totalOrders == 2
     assert isinstance(queue.orders[1], Order)
     assert queue.orders[1] == kayleigh_order
+    assert queue.orderHistory[0] == kayleigh_order
 
+    global hannah_order_copy
+    hannah_order_copy = copy.deepcopy(hannah_order)
     queue.addOrder(hannah_order)
     assert len(queue.orders) == 4
     assert queue.totalDrinks == 5
@@ -202,9 +226,22 @@ def test_orderBatching(queue):
     assert isinstance(queue.orders[3], Order)
     assert soy_cappuccino in queue.orders[3].drinks
     assert 3 in queue.lookupTable['Soy_Dry']
+    assert queue.orderHistory[0] == hannah_order_copy
 
 def test_completeDrinks(queue):
+    global jeff_order_copy
+    jeff_order_copy = copy.deepcopy(jeff_order)
+
     queue.completeDrinks([soy_cappuccino.identifier, jeff_order.drinks[0].identifier])
+    if all([queue.orderHistory[0].drinks[2].timeComplete, 
+           queue.orderHistory[2].drinks[0].timeComplete,
+           queue.orderHistory[2].timeComplete]):
+        queue.orderHistory[0].drinks[2].timeComplete = time
+        queue.orderHistory[2].drinks[0].timeComplete = time
+        queue.orderHistory[2].timeComplete = time
+    else:
+        raise ValueError('Completed Items have NoneType timeComplete Attribute')
+    
     assert queue.totalDrinks == 3
     assert queue.totalOrders == 2
 
@@ -215,6 +252,17 @@ def test_completeDrinks(queue):
     assert 0 in queue.lookupTable["Whole_Wet"]
     assert 1 in queue.lookupTable["Oat_Dry"]
     assert not queue.lookupTable["Soy_Dry"]
+
+def test_getCompleteItems(queue):
+    completed_items = queue.getCompletedItems()
+
+    jeff_order_copy.timeComplete = time
+    jeff_order_copy.drinks[0].timeComplete = time
+    soy_cappuccino.timeComplete = time
+    hannah_order_copy.drinks = [soy_cappuccino]
+
+    assert completed_items[0] == hannah_order_copy
+    assert completed_items[1] == jeff_order_copy
 
 def test_crossOrderBatching(queue):
     queue.completeItem(0)
@@ -237,13 +285,16 @@ def test_crossOrderBatching(queue):
     queue.addOrder(adam_order)
     assert isinstance(queue.orders[num_orders], Order)
     assert queue.orders[num_orders] == adam_order
+    assert queue.orderHistory[0] == adam_order
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 1
     assert queue.totalOrders == num_orders + 1
     assert num_orders in queue.lookupTable["Whole_Wet"]
 
+    kayleigh_order_copy = copy.deepcopy(kayleigh_order)
     queue.addOrder(kayleigh_order)
     assert isinstance(queue.orders[num_orders], Batch)
+    assert queue.orderHistory[0] == kayleigh_order_copy
     assert latte and flat_white in queue.orders[num_orders].drinks
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 2
