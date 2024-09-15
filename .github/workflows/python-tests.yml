@@ -126,5 +126,5 @@ jobs:
           BASEURL: http://127.0.0.1:8000
         run: |
           sleep 5 #Wait for Uvicorn server to start
-          pytest -s Manager/tests/test_queueManager.py
+          pytest Manager/tests/test_queueManager.py
   
