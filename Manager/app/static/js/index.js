@@ -35,7 +35,7 @@ function updateOrderList(queue, totalOrders) {
         orderCard.setAttribute('onclick', `selectOrder(${orderIndex}, event)`);
 
         let orderHeaderHTML = '';
-        if (order.volume) {
+        if (order.volume >= 0) {
             const milkType = order.milk.replace('Milk', '');
             orderHeaderHTML = `
                 <div class="order-batch-card-header">
@@ -46,7 +46,7 @@ function updateOrderList(queue, totalOrders) {
                 <div class="order-batch-card-header">
                     <h2>Order</h2>
                     <h3>${order.customer}</h3>
-                    <h6>${order.time}</h6>
+                    <h6>${order.timeReceived}</h6>
                 </div>`;
         };
 

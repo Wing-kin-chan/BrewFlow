@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrewFlow</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<style>
+    {% for key, color in colors.items() %}
+        .{{ key }} {
+            background-color: {{ color }};
+        }
+    {% endfor %}
+</style>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Order History</h1> 
+        </header>
+        <main class="order-list" id="orderList" >
+            {% for item in history %}
+                <div class="order-batch-card-header">
+                    <h2>Order</h2>
+                    <h3>{{ item.customer }}</h3>
+                    <h6>{{ item.time }}</h6>
+                </div>
+                <div class="order-batch-card-body">
+                    <ul>
+                    {% for drink in item.drinks %}
+                        <li>
+                            <div class="drink-card" id="drink-{{ drink.identifier }}" onclick="selectDrink('{{ drink.identifier}}', event)">
+                                <div class="drink-card-header {{ drink.milk }}">
+                                    <span class="drink-name">{{ drink.drink }}</span>
+                                    {% if item.__class__.__name__ == 'Batch' %}
+                                        <span class="customer-name">{{ drink.customer }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="drink-card-body">
+                                    <ul>
+                                        <li class="drink-card-text-info">
+                                            <p>{{ drink.milk.rstrip('Milk') }} Milk</p>
+                                            {% for option in drink.options %}
+                                                <p>{{ option }}</p>
+                                            {% endfor %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </main>
+        <footer class="footer">
+            <div class="footer-buttons">
+                <form method="get">
+                    <button class="footer-button" type="submit" formaction="/configuration">Configuration</button>
+                    <button class="footer-button" type="submit" formaction="/">Orders</button>
+                </form>
+            </div>
+            <div class="total-orders">
+                Completed: <span class="order-count">{{ totalOrders }}</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

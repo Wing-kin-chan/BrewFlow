@@ -2,7 +2,8 @@ from Menu import Drink, Order
 from pydantic import BaseModel
 from typing import List, Set, Union
 from itertools import product
-import logging, json, os
+from datetime import datetime
+import logging, json, os, copy
 
 logging.basicConfig(level = logging.DEBUG)
 
@@ -95,6 +96,7 @@ class Queue:
 
     def __init__(self):
         self.orders: List[Order, Batch] = []
+        self.orderHistory : List[Order] =[]
         self.totalOrders: int = 0
         self.totalDrinks: int = 0
         self.OrdersComplete: int = 0
@@ -160,6 +162,7 @@ class Queue:
 
     def addOrder(self, order: Order) -> None:
         self.orders.append(order)
+        self.orderHistory.insert(0, copy.deepcopy(order))
         new_order_index = len(self.orders) - 1
         self.totalOrders += 1
         self.totalDrinks += len(order.drinks)
@@ -201,7 +204,7 @@ class Queue:
                 new_order_index - search_depth <= i < new_order_index 
                 ]
             
-            for index in sorted(indexes, reverse = True):
+            for index in indexes:
                 # Check if drink can be added to an existing batch
                 if isinstance(self.orders[index], Batch):
                     batch: Batch = self.orders[index]
@@ -244,10 +247,20 @@ class Queue:
         Parameters:
             - drink_identifiers: List[int] list of drink identifiers that are to be removed from the queue
         """
+        time_complete = datetime.now().time()
+
         for order in self.orders:
             order.drinks = [
                 drink for drink in order.drinks if drink.identifier not in drink_identifiers
             ]
+        
+        for order in self.orderHistory:
+            for drink in order.drinks:
+                if drink.identifier in drink_identifiers:
+                    drink.timeComplete = time_complete
+            
+            if all([drink.timeComplete for drink in order.drinks]):
+                order.timeComplete = time_complete
         
         self.totalDrinks -= len(drink_identifiers)
         self._clean_empty_orders()
@@ -259,7 +272,37 @@ class Queue:
         Parameters:
             - index: int index of the item to be completed.
         """
-        self.totalDrinks -= len(self.orders[index].drinks)
-        self.orders.pop(index)
+        time_complete = datetime.now().time()
+
+        if isinstance(self.orders[index], Order):
+            self.totalDrinks -= len(self.orders[index].drinks)
+            orderID = self.orders.pop(index).orderID
+
+            for order in self.orderHistory:
+                if order.orderID == orderID:
+                    order.timeComplete = time_complete
+                    
+                    for drink in order.drinks:
+                        drink.timeComplete = time_complete
+        
+        elif isinstance(self.orders[index], Batch):
+            drink_identifiers = [d.identifier for d in self.orders[index].drinks]
+            self.completeDrinks(drink_identifiers)
+
+        else:
+            raise TypeError(f'Object at {index} index is not instance of Batch or Order.')
+
         self.remove_item_from_lookupTable(index)
         self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
+
+    def getCompletedItems(self) -> List[Order]:
+        out = []
+
+        for order in self.orderHistory:
+            completed_drinks = [drink for drink in order.drinks if drink.timeComplete is not None]
+            if completed_drinks:
+                order_copy = copy.deepcopy(order)
+                order_copy.drinks = completed_drinks
+                out.append(order_copy)
+        
+        return out
