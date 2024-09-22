@@ -1,10 +1,34 @@
-from pydantic import BaseModel
-from typing import List, Union
+from pydantic import BaseModel, Field, RootModel
+from typing import List, Optional
 from fastapi import WebSocket, WebSocketDisconnect
+import json
 
-class Item(BaseModel):
-    index: Union[int, None]
-    items: Union[List[int], None]
+class JSONList(RootModel):
+    root: List[int]
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value):
+        if isinstance(value, str):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError:
+                raise ValueError("Invalid JSON string")
+            
+        if not isinstance(value, List):
+            raise ValueError("JSON data must be a list")
+        
+        if not value:
+            return cls(root = [])
+        
+        return [int(item) for item in value]
+    
+class FormData(BaseModel):
+    selectedDrinkIDs: JSONList = Field(default_factory = lambda: JSONList(root = []))
+    selectedItemIndex: Optional[int] = None
 
 class ConnectionManager:
     def __init__(self):
