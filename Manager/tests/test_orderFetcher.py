@@ -7,13 +7,15 @@ def test_fetchOrders():
     assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
     assert hasattr(order, 'date')
-    assert hasattr(order, 'time')
+    assert hasattr(order, 'timeReceived')
+    assert hasattr(order, 'timeComplete')
     assert hasattr(order, 'drinks')
 
     assert isinstance(order.orderID, int)
     assert isinstance(order.customer, str)
     assert isinstance(order.date, date)
-    assert isinstance(order.time, time)
+    assert isinstance(order.timeReceived, time)
+    assert not order.timeComplete
     assert isinstance(order.drinks, list)
 
     orderID = order.orderID
@@ -27,6 +29,8 @@ def test_fetchOrders():
         assert hasattr(drink, 'temperature')
         assert hasattr(drink, 'texture')
         assert hasattr(drink, 'options')
+        assert hasattr(drink, 'timeReceived')
+        assert hasattr(drink, 'timeComplete')
 
         assert drink.orderID == orderID
         assert drink.customer == orderOwner
@@ -40,4 +44,5 @@ def test_fetchOrders():
         assert isinstance(drink.texture, str) or drink.texture is None
         assert isinstance(drink.options, list)
         assert all(isinstance(option, str) for option in drink.options)
-        
+        assert isinstance(drink.timeReceived, time)
+        assert not drink.timeComplete

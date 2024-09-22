@@ -68,11 +68,13 @@
         </main>
         <footer class="footer">
             <div class="footer-buttons">
-                <button class="footer-button">Configuration</button>
-                <button class="footer-button">Recall</button>
+                <form method="get">
+                    <button class="footer-button" type="submit" formaction="/configuration">Configuration</button>
+                    <button class="footer-button" type="submit" formaction="/history">Recall</button>
+                </form>
             </div>
             <div class="total-orders">
-                Total Orders: <span class="order-count">{{ queue.totalOrders }}</span>
+                Orders: <span class="order-count">{{ queue.totalOrders }}</span>
             </div>
         </footer>
     </div>

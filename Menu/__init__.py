@@ -14,10 +14,30 @@ class Drink(BaseModel):
     options: List[str]
     customer: Optional[str]
     identifier: int = Field(default_factory = lambda: 0, init = False)
+    timeReceived: Optional[time]
+    timeComplete: Optional[time]
 
     def __init__(self, **data):
         super().__init__(**data)
         object.__setattr__(self, 'identifier', id(self))
+
+    def __eq__(self, other):
+        if isinstance(other, Drink):
+            return(
+                self.orderID == other.orderID and
+                self.drink == other.drink and
+                self.milk == other.milk and
+                self.milk_volume == other.milk_volume and
+                self.shots == other.shots and
+                self.temperature == other.temperature and
+                self.texture == other.texture and
+                self.options == other.options and
+                self.customer == other.customer and
+                self.identifier == other.identifier and
+                self.timeReceived == other.timeReceived and
+                self.timeComplete == other.timeComplete
+                   )
+        return False
 
     def __repr__(self):
         if self.customer:
@@ -44,7 +64,8 @@ class Order(BaseModel):
     orderID: int
     customer: str
     date: date
-    time: time
+    timeReceived: time
+    timeComplete: Optional[time]
     drinks: List[Drink]
 
     def __repr__(self):
@@ -56,6 +77,18 @@ class Order(BaseModel):
                 result += f"      - {drink.drink} with {drink.milk}\n"
         
         return result
+    
+    def __eq__(self, other):
+        if isinstance(other, Order):
+            return(
+                self.orderID == other.orderID and
+                self.customer == other.customer and
+                self.date == other.date and
+                self.timeReceived == other.timeReceived and
+                self.timeComplete == other.timeComplete and
+                self.drinks == other.drinks
+            )
+        return False
 
     @model_validator(mode = 'before')
     @classmethod
@@ -75,6 +108,16 @@ class Order(BaseModel):
         for drink in drinks:
             if drink.get('orderID') is None:
                 drink['orderID'] = orderID
+        return values
+    
+    @model_validator(mode = 'before')
+    @classmethod
+    def check_drinkTime(cls, values):
+        order_time = values.get('timeReceived')
+        drinks = values.get('drinks', [])
+        for drink in drinks:
+            if drink.get('timeReceived') is None:
+                drink['timeReceived'] = order_time
         return values
 
     def group_drinks(self) -> List[List[Drink]]:

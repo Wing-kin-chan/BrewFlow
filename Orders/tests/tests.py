@@ -34,6 +34,8 @@ def test_generateDrink():
     assert hasattr(drink, 'shots')
     assert hasattr(drink, 'temperature')
     assert hasattr(drink, 'milk_volume')
+    assert hasattr(drink, 'timeReceived')
+    assert hasattr(drink, 'timeComplete')
     assert drink.drink in [drink['drink'] for drink in DRINKS]
     assert drink.milk in MILKS
     assert drink.texture in TEXTURES
@@ -81,12 +83,14 @@ def test_generateOrder():
     assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
     assert hasattr(order, 'date')
-    assert hasattr(order, 'time')
+    assert hasattr(order, 'timeReceived')
+    assert hasattr(order, 'timeComplete')
     assert hasattr(order, 'drinks')
     assert isinstance(order.orderID, int)
     assert isinstance(order.customer, str)
     assert isinstance(order.date, date)
-    assert isinstance(order.time, time)
+    assert isinstance(order.timeReceived, time)
+    assert not order.timeComplete
     assert isinstance(order.drinks, list)
     assert all(isinstance(drink, Drink) for drink in order.drinks)
     
@@ -111,12 +115,14 @@ def test_random_order_generation(capsys):
         assert hasattr(order, 'orderID')
         assert hasattr(order, 'customer')
         assert hasattr(order, 'date')
-        assert hasattr(order, 'time')
+        assert hasattr(order, 'timeReceived')
+        assert hasattr(order, 'timeComplete')
         assert hasattr(order, 'drinks')
         assert isinstance(order.orderID, int)
         assert isinstance(order.customer, str)
         assert isinstance(order.date, date)
-        assert isinstance(order.time, time)
+        assert isinstance(order.timeReceived, time)
+        assert not order.timeComplete
         assert isinstance(order.drinks, list)
         assert all(isinstance(drink, Drink) for drink in order.drinks)
 
@@ -126,6 +132,8 @@ def test_random_order_generation(capsys):
             assert hasattr(drink, 'texture')
             assert hasattr(drink, 'shots')
             assert hasattr(drink, 'temperature')
+            assert hasattr(drink, 'timeReceived')
+            assert hasattr(drink, 'timeComplete')
             assert drink.drink in [drink['drink'] for drink in DRINKS]
             assert drink.milk in MILKS
             assert drink.texture in TEXTURES
@@ -140,11 +148,13 @@ def test_getOrder():
 
     assert 'customer' in data
     assert 'date' in data
-    assert 'time' in data
+    assert 'timeReceived' in data
+    assert 'timeComplete' in data
     assert 'drinks' in data
     assert isinstance(data['customer'], str)
     assert isinstance(data['date'], str)
-    assert isinstance(data['time'], str)
+    assert isinstance(data['timeReceived'], str)
+    assert not data['timeComplete']
     assert isinstance(data['drinks'], list)
 
     for drink in data['drinks']:
@@ -154,6 +164,8 @@ def test_getOrder():
         assert "texture" in drink
         assert "temperature" in drink
         assert "options" in drink
+        assert "timeReceived" in drink
+        assert "timeComplete" in drink
         
         assert isinstance(drink["drink"], str)
         assert isinstance(drink["milk"], str)
@@ -161,3 +173,5 @@ def test_getOrder():
         assert isinstance(drink["texture"], str) or drink["texture"] is None
         assert isinstance(drink["temperature"], str)
         assert isinstance(drink["options"], list)
+        assert isinstance(drink["timeReceived"], str)
+        assert not drink["timeComplete"]

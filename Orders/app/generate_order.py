@@ -43,6 +43,7 @@ def generateOrder():
     order = Order(orderID = orderID,
                     customer = customer,
                     date = order_date,
-                    time = order_time,
+                    timeReceived = order_time,
+                    timeComplete = None,
                     drinks = drinks)
     return order
