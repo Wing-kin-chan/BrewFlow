@@ -116,7 +116,7 @@ function selectDrink(drinkIdentifier, event) {
     let drinkElement = document.getElementById(`drink-${drinkIdentifier}`);
 
     if (selectedDrinkIDs.includes(drinkIdentifier)) {
-        selectedDrinkIDs.filter(id => id !== drinkIdentifier);
+        selectedDrinkIDs = selectedDrinkIDs.filter(id => id !== drinkIdentifier);
         drinkElement.classList.remove('selected');
     } else {
         selectedDrinkIDs.push(drinkIdentifier);
@@ -136,3 +136,42 @@ function deselectAll() {
     selectedItemIndex = null;
     selectedDrinkIDs = [];
 }
+
+const form = document.getElementById('completeForm')
+const submitButton = document.getElementById('completeButton')
+
+submitButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    if (selectedDrinkIDs.length === 0 && selectedItemIndex == null) {
+        alert("No Document Selected");
+        return;
+    }
+
+    fetch('/complete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'selectedDrinkIDs': JSON.stringify(selectedDrinkIDs),
+            'selectedItemIndex': selectedItemIndex !== null ? selectedItemIndex : ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const queue = data.updatedOrderList.map(order => JSON.parse(order));
+        const totalOrders = data.updatedTotalOrders;
+        console.log(queue, totalOrders)
+
+        updateOrderList(queue, totalOrders)
+    })
+    .catch(error => {
+        console.error('Error:', error)
+    });
+});
+
+document.getElementById('orderList').addEventListener('click', function(event) {
+    if (!event.target.closest('.order-batch-card') && !event.target.closest('.drink-card')) {
+        deselectAll();
+    }
+});
