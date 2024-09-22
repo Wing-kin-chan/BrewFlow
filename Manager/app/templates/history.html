@@ -20,6 +20,7 @@
         </header>
         <main class="order-list" id="orderList" >
             {% for item in history %}
+            <div class="order-batch-card" id="order-{{ loop.index0 }}">
                 <div class="order-batch-card-header">
                     <h2>Order</h2>
                     <h3>{{ item.customer }}</h3>
@@ -51,6 +52,7 @@
                     {% endfor %}
                     </ul>
                 </div>
+            </div>
             {% endfor %}
         </main>
         <footer class="footer">
