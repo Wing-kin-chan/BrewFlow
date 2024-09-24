@@ -263,6 +263,7 @@ class Queue:
                 order.timeComplete = time_complete
         
         self.totalDrinks -= len(drink_identifiers)
+        self.DrinksComplete += len(drink_identifiers)
         self._clean_empty_orders()
 
     def completeItem(self, index: int) -> None:
@@ -272,37 +273,21 @@ class Queue:
         Parameters:
             - index: int index of the item to be completed.
         """
-        time_complete = datetime.now().time()
-
-        if isinstance(self.orders[index], Order):
-            self.totalDrinks -= len(self.orders[index].drinks)
-            orderID = self.orders.pop(index).orderID
-
-            for order in self.orderHistory:
-                if order.orderID == orderID:
-                    order.timeComplete = time_complete
-                    
-                    for drink in order.drinks:
-                        drink.timeComplete = time_complete
-        
-        elif isinstance(self.orders[index], Batch):
-            drink_identifiers = [d.identifier for d in self.orders[index].drinks]
-            self.completeDrinks(drink_identifiers)
-
-        else:
-            raise TypeError(f'Object at {index} index is not instance of Batch or Order.')
-
+        drink_identifiers = [d.identifier for d in self.orders[index].drinks]
+        self.completeDrinks(drink_identifiers)
         self.remove_item_from_lookupTable(index)
         self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
 
     def getCompletedItems(self) -> List[Order]:
         out = []
-
         for order in self.orderHistory:
             completed_drinks = [drink for drink in order.drinks if drink.timeComplete is not None]
             if completed_drinks:
                 order_copy = copy.deepcopy(order)
                 order_copy.drinks = completed_drinks
                 out.append(order_copy)
-        
         return out
+
+    def countCompletedOrders(self) -> int:
+        return len([order for order in self.orderHistory if order.timeComplete])
+    
