@@ -265,6 +265,9 @@ def test_getCompleteItems(queue):
     assert completed_items[1] == jeff_order_copy
 
 def test_crossOrderBatching(queue):
+    kayleigh_order_copy = copy.deepcopy(kayleigh_order)
+    kayleigh_order_copy_2 = copy.deepcopy(kayleigh_order_copy)
+
     queue.completeItem(0)
     queue.completeItem(0)
 
@@ -273,7 +276,7 @@ def test_crossOrderBatching(queue):
     assert len(queue.orders) == 0
     assert all(not value for value in queue.lookupTable.values())
 
-    black_coffees = [o for o in orders if o.drinks[0].milk == "No Milk" and
+    black_coffees = [o for o in orders if o.drinks and o.drinks[0].milk == "No Milk" and
              len(o.drinks) == 1]
     num_orders = len(black_coffees)
     for order in black_coffees:
@@ -283,19 +286,18 @@ def test_crossOrderBatching(queue):
     assert queue.totalDrinks == num_orders
 
     queue.addOrder(adam_order)
-    assert isinstance(queue.orders[num_orders], Order)
-    assert queue.orders[num_orders] == adam_order
+    assert isinstance(queue.orders[-1], Order)
+    assert queue.orders[-1] == adam_order
     assert queue.orderHistory[0] == adam_order
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 1
     assert queue.totalOrders == num_orders + 1
     assert num_orders in queue.lookupTable["Whole_Wet"]
 
-    kayleigh_order_copy = copy.deepcopy(kayleigh_order)
-    queue.addOrder(kayleigh_order)
-    assert isinstance(queue.orders[num_orders], Batch)
-    assert queue.orderHistory[0] == kayleigh_order_copy
-    assert latte and flat_white in queue.orders[num_orders].drinks
+    queue.addOrder(kayleigh_order_copy)
+    assert isinstance(queue.orders[-1], Batch)
+    assert queue.orderHistory[0] == kayleigh_order_copy_2
+    assert latte and flat_white in queue.orders[-1].drinks
     assert len(queue.orders) == num_orders + 1
     assert queue.totalDrinks == num_orders + 2
     assert queue.totalOrders == num_orders + 2
