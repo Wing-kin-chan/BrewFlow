@@ -52,7 +52,7 @@ async def complete(
     try:
         form_data = FormData(
             selectedDrinkIDs = json.loads(selectedDrinkIDs),
-            selectedItemIndex = int(selectedItemIndex)
+            selectedItemIndex = selectedItemIndex
         )
 
         if form_data.selectedDrinkIDs:
@@ -64,7 +64,8 @@ async def complete(
 
         return JSONResponse(content = {
             'updatedOrderList': [order.model_dump_json() for order in queue.orders],
-            'updatedTotalOrders': queue.totalOrders
+            'updatedTotalOrders': queue.totalOrders,
+            'updatedTotalDrinks': queue.totalDrinks
         })
     
     except json.JSONDecodeError as e:
@@ -82,7 +83,8 @@ async def history(request: Request):
             "request": request,
             "history": queue.getCompletedItems(),
             "colors": MILK_COLORS,
-            "totalOrders": queue.OrdersComplete
+            "totalOrders": queue.countCompletedOrders(),
+            "totalDrinks": queue.DrinksComplete
         }
     )
 
@@ -109,6 +111,7 @@ async def receiveData(request: Request):
     queue_data = {
         "orders": [order.model_dump_json() for order in queue.orders],
         "totalOrders": queue.totalOrders,
+        "totalDrinks": queue.totalDrinks,
     }
     await connectionManager.broadcast(json.dumps(queue_data))
 
