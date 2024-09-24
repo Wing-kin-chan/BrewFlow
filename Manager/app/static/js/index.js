@@ -9,8 +9,9 @@ socket.onmessage = function(event) {
 
     const queue = data.orders.map(order => JSON.parse(order));
     const totalOrders = data.totalOrders;
+    const totalDrinks = data.totalDrinks;
 
-    updateOrderList(queue, totalOrders);
+    updateOrderList(queue, totalOrders, totalDrinks);
 }
 
 socket.onerror = function(error) {
@@ -21,9 +22,12 @@ socket.onclose = function() {
     console.log("WebSocket closed");
 };
 
-function updateOrderList(queue, totalOrders) {
+function updateOrderList(queue, totalOrders, totalDrinks) {
     const totalOrdersElement = document.querySelector('.order-count');
-    totalOrdersElement.textContent = totalOrders;
+    totalOrdersElement.textContent = "Orders: " + totalOrders;
+
+    const totalDrinksElement = document.querySelector('.drinks-count');
+    totalDrinksElement.textContent = "Drinks: " + totalDrinks;
 
     const orderList = document.getElementById('orderList');
     orderList.innerHTML = '';
@@ -115,6 +119,11 @@ function selectDrink(drinkIdentifier, event) {
 
     let drinkElement = document.getElementById(`drink-${drinkIdentifier}`);
 
+    if (selectedItemIndex) {
+        selectedItemIndex = null;
+        deselectAll();
+    }
+
     if (selectedDrinkIDs.includes(drinkIdentifier)) {
         selectedDrinkIDs = selectedDrinkIDs.filter(id => id !== drinkIdentifier);
         drinkElement.classList.remove('selected');
@@ -161,9 +170,9 @@ submitButton.addEventListener('click', function(event) {
     .then(data => {
         const queue = data.updatedOrderList.map(order => JSON.parse(order));
         const totalOrders = data.updatedTotalOrders;
-        console.log(queue, totalOrders)
+        const totalDrinks = data.updatedTotalDrinks;
 
-        updateOrderList(queue, totalOrders)
+        updateOrderList(queue, totalOrders, totalDrinks);
     })
     .catch(error => {
         console.error('Error:', error)
