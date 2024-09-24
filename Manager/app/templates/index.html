@@ -73,8 +73,9 @@
                     <button class="footer-button" type="submit" formaction="/history">History</button>
                 </form>
             </div>
-            <div class="total-orders">
-                Orders: <span class="order-count">{{ queue.totalOrders }}</span>
+            <div class="counter">
+                <p class="order-count">Orders: {{ queue.totalOrders }}</p>
+                <p class="drinks-count">Drinks: {{ queue.totalDrinks }}</p>
             </div>
         </footer>
     </div>
