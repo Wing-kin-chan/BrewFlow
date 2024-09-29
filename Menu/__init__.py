@@ -63,7 +63,7 @@ class Drink(BaseModel):
 class Order(BaseModel):
     orderID: int
     customer: str
-    date: date
+    dateReceived: date
     timeReceived: time
     timeComplete: Optional[time]
     drinks: List[Drink]
@@ -83,7 +83,7 @@ class Order(BaseModel):
             return(
                 self.orderID == other.orderID and
                 self.customer == other.customer and
-                self.date == other.date and
+                self.dateReceived == other.dateReceived and
                 self.timeReceived == other.timeReceived and
                 self.timeComplete == other.timeComplete and
                 self.drinks == other.drinks
