@@ -114,7 +114,7 @@ def test_random_order_generation(capsys):
     for order in orders:
         assert hasattr(order, 'orderID')
         assert hasattr(order, 'customer')
-        assert hasattr(order, 'date')
+        assert hasattr(order, 'dateReceived')
         assert hasattr(order, 'timeReceived')
         assert hasattr(order, 'timeComplete')
         assert hasattr(order, 'drinks')
