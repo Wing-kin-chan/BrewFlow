@@ -82,7 +82,7 @@ def test_generateOrder():
     order = generateOrder()
     assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
-    assert hasattr(order, 'date')
+    assert hasattr(order, 'dateReceived')
     assert hasattr(order, 'timeReceived')
     assert hasattr(order, 'timeComplete')
     assert hasattr(order, 'drinks')
