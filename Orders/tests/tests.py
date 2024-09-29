@@ -88,7 +88,7 @@ def test_generateOrder():
     assert hasattr(order, 'drinks')
     assert isinstance(order.orderID, int)
     assert isinstance(order.customer, str)
-    assert isinstance(order.date, date)
+    assert isinstance(order.dateReceived, date)
     assert isinstance(order.timeReceived, time)
     assert not order.timeComplete
     assert isinstance(order.drinks, list)
@@ -120,7 +120,7 @@ def test_random_order_generation(capsys):
         assert hasattr(order, 'drinks')
         assert isinstance(order.orderID, int)
         assert isinstance(order.customer, str)
-        assert isinstance(order.date, date)
+        assert isinstance(order.dateReceived, date)
         assert isinstance(order.timeReceived, time)
         assert not order.timeComplete
         assert isinstance(order.drinks, list)
@@ -147,12 +147,12 @@ def test_getOrder():
     data = json.loads(response.json())
 
     assert 'customer' in data
-    assert 'date' in data
+    assert 'dateReceived' in data
     assert 'timeReceived' in data
     assert 'timeComplete' in data
     assert 'drinks' in data
     assert isinstance(data['customer'], str)
-    assert isinstance(data['date'], str)
+    assert isinstance(data['dateReceived'], str)
     assert isinstance(data['timeReceived'], str)
     assert not data['timeComplete']
     assert isinstance(data['drinks'], list)

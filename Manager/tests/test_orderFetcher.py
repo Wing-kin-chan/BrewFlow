@@ -6,14 +6,14 @@ def test_fetchOrders():
     order = fetchOrder.fetchOrder()
     assert hasattr(order, 'orderID')
     assert hasattr(order, 'customer')
-    assert hasattr(order, 'date')
+    assert hasattr(order, 'dateReceived')
     assert hasattr(order, 'timeReceived')
     assert hasattr(order, 'timeComplete')
     assert hasattr(order, 'drinks')
 
     assert isinstance(order.orderID, int)
     assert isinstance(order.customer, str)
-    assert isinstance(order.date, date)
+    assert isinstance(order.dateReceived, date)
     assert isinstance(order.timeReceived, time)
     assert not order.timeComplete
     assert isinstance(order.drinks, list)

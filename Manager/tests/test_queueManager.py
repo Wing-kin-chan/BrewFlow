@@ -37,7 +37,7 @@ def jeff_order(date_time):
     }
     return Order.model_validate({
         'orderID': 1,
-        'date': date,
+        'dateReceived': date,
         'timeReceived': time,
         'customer': 'Jeff',
         'drinks': [jeff_drink],
@@ -61,7 +61,7 @@ def kayleigh_order(date_time):
     }
     return Order.model_validate({
         'orderID': 2,
-        'date': date,
+        'dateReceived': date,
         'timeReceived': time,
         'customer': 'Kayleigh',
         'drinks': [kayleigh_drink],
@@ -85,7 +85,7 @@ def adam_order(date_time):
     }
     return Order.model_validate({
         'orderID': 12345,
-        'date': date,
+        'dateReceived': date,
         'timeReceived': time,
         'customer': 'Adam',
         'drinks': [adam_drink],
@@ -136,7 +136,7 @@ def hannah_order(date_time):
     return Order.model_validate({
         'orderID': 23456,
         'customer': 'Hannah',
-        'date': date,
+        'dateReceived': date,
         'timeReceived': time,
         'drinks': hannah_drinks,
         'timeComplete': None
