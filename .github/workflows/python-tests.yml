@@ -83,11 +83,11 @@ jobs:
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: test-OrderAPI
         run: |
-            pytest Order/tests/tests.py
+            pytest Orders/tests/tests.py
   
   test-fetchOrder:
     runs-on: ubuntu-latest
-    needs: Build
+    needs: [Build, test-OrderGenerator]
     steps:
       - uses: actions/checkout@v4
       - name: Restore dependencies
