@@ -5,7 +5,7 @@ import sys
 from tqdm import trange
 
 from Manager.app.scripts.queueManager import Queue, Batch, fetchOrder
-from Menu import Order, Drink
+from Manager.app.models import Order, Drink
 
 @pytest.fixture(scope='module')
 def orders():

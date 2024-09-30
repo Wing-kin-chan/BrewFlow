@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from Manager.app.scripts.services.CRUD import Connection
 from Manager.app.scripts.services import PydanticORM
 from Manager.app.models.db import Orders, Drinks
-from Menu import Order, Drink
+from Manager.app.models import Order, Drink
 
 TEST_DATABASE_URI = "sqlite+aiosqlite:///:memory:"
 
