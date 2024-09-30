@@ -61,9 +61,29 @@ jobs:
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Test Orders API
+  
+  test-OrderGenerator:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      - name: Set up Python 3.11.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11.9'
+      - name: Install dependencies
         run: |
-          pytest Orders/tests/tests.py
+            python -m pip install --upgrade pip
+            pip install flake8 pytest
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: test-OrderAPI
+        run: |
+            pytest Order/tests/tests.py
   
   test-fetchOrder:
     runs-on: ubuntu-latest
@@ -99,7 +119,7 @@ jobs:
 
   test-queueManager:
     runs-on: 'ubuntu-latest'
-    needs: Build
+    needs: [Build, test-OrderGenerator]
     steps:
       - uses: actions/checkout@v4
       - name: Restore dependencies
@@ -129,3 +149,25 @@ jobs:
           sleep 5 #Wait for Uvicorn server to start
           pytest Manager/tests/test_queueManager.py
   
+  test-queueDB:
+    runs-on: 'ubuntu-latest'
+    needs: Build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      - name: Set up Python 3.11.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11.9'
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install flake8 pytest
+            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run test-queueDB
+        run: |
+            pytest Manager/tests/test_queueDB.py
