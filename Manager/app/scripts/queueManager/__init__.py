@@ -1,4 +1,4 @@
-from Menu import Drink, Order
+from Manager.app.models import Drink, Order
 from pydantic import BaseModel
 from typing import List, Set, Union
 from itertools import product
@@ -6,18 +6,6 @@ from datetime import datetime
 import logging, json, os, copy
 
 logging.basicConfig(level = logging.DEBUG)
-
-RELATIVE_PATH = "../../../../Menu/menu.json"
-MENU_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), RELATIVE_PATH
-)
-with open(MENU_FILE_PATH, 'r') as f:
-    data = json.load(f)
-
-MILKS = data.get('milks', [])
-TEXTURES = data.get('textures', [])
-COMBINATIONS = product(MILKS, TEXTURES)
-SEARCH_DEPTH = data.get('SEARCH_DEPTH')
 
 class Batch(BaseModel):
     '''
@@ -101,8 +89,23 @@ class Queue:
         self.totalDrinks: int = 0
         self.OrdersComplete: int = 0
         self.DrinksComplete: int = 0
-        # Use hash table as lookup is O(1) rather than searching for
-        # drink in the orders attribute which is O(n) at worst.
+        self.initialize_lookupTable()
+        
+
+    def initialize_lookupTable(self):
+        RELATIVE_PATH = "../../../config/config.json"
+        CONFIG_FILE_PATH = os.path.join(
+            os.path.dirname(__file__), RELATIVE_PATH
+        )
+
+        with open(CONFIG_FILE_PATH, 'r') as f:
+            data = json.load(f)
+
+        MILKS = data.get('milks', [])
+        TEXTURES = data.get('textures', [])
+        COMBINATIONS = product(MILKS, TEXTURES)
+
+        self.__SEARCH_DEPTH = data.get('SEARCH_DEPTH')
         self.lookupTable: dict[str, Set[int]] = {
             f"{milk}_{texture}": set() for milk, texture in COMBINATIONS
         }
@@ -176,7 +179,7 @@ class Queue:
         # by searching inside order.drinks first.
         if len(order.drinks) > 1:
             grouped_drinks = order.group_drinks()
-            search_depth = SEARCH_DEPTH
+            search_depth = self.__SEARCH_DEPTH
             if grouped_drinks:
                 for group in grouped_drinks:
                     if len(group) > 1:
