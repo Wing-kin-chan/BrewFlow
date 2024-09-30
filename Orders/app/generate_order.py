@@ -1,4 +1,4 @@
-from Menu import Order
+from Manager.app.models import Order
 from Orders.app.generate_drink import generateDrink
 from datetime import datetime
 import requests, random

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, RootModel
 from typing import List, Optional
 from fastapi import WebSocket
-from Menu import Drink, Order
+from Manager.app.models import Drink, Order
 from Manager.app.models.db import Drinks, Orders
 import json
 

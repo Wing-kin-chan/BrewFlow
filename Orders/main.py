@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from Orders.app.generate_order import generateOrder
-from Menu import Order
+from Manager.app.models import Order
 import httpx, json, logging
 
 logging.basicConfig(level = logging.DEBUG)

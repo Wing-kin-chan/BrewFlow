@@ -7,14 +7,14 @@ import json, os
 
 from Orders.app.generate_drink import generateDrink
 from Orders.app.generate_order import generateOrder, getCustomerName
-from Menu import Order, Drink
+from Manager.app.models import Order, Drink
 from Orders.main import app
 
 client = TestClient(app)
 
-RELATIVE_PATH = "../../Menu/"
+RELATIVE_PATH = "../../Manager/config"
 MENU_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), RELATIVE_PATH, "menu.json"
+    os.path.dirname(__file__), RELATIVE_PATH, "config.json"
 )
 
 with open(MENU_FILE_PATH, 'r') as f:

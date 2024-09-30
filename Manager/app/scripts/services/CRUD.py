@@ -5,7 +5,7 @@ from sqlalchemy import desc, text
 from Manager.app.models.db import Orders, Drinks, Database, AsyncSession
 from Manager.app.scripts.services import PydanticORM
 
-from Menu import Order
+from Manager.app.models import Order
 from typing import List
 from datetime import time
 

@@ -1,5 +1,5 @@
 import requests
-from Menu import Order
+from Manager.app.models import Order
 import logging
 
 logging.basicConfig(level = logging.DEBUG)

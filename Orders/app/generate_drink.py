@@ -1,12 +1,12 @@
 import random, json, os
 from typing import List
 
-RELATIVE_PATH = "../../Menu/"
-MENU_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), RELATIVE_PATH, "menu.json"
+RELATIVE_PATH = "../../Manager/config/"
+CONFIG_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), RELATIVE_PATH, "config.json"
 )
 
-with open(MENU_FILE_PATH, 'r') as f:
+with open(CONFIG_FILE_PATH, 'r') as f:
     data = json.load(f)
 MILKS: List[str] = data.get('milks', [])
 TEXTURES: List[str] = data.get('textures', [])
