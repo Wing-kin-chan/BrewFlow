@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, RootModel
 from typing import List, Optional
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket
+from Menu import Drink, Order
+from Manager.app.models.db import Drinks, Orders
 import json
 
 class JSONList(RootModel):
@@ -29,6 +31,28 @@ class JSONList(RootModel):
 class FormData(BaseModel):
     selectedDrinkIDs: JSONList = Field(default_factory = lambda: JSONList(root = []))
     selectedItemIndex: Optional[int] = None
+
+class PydanticORM:
+    @staticmethod
+    def readDrinksORM(drinks: Drinks) -> dict:
+        out = drinks.__dict__
+        if out['options']:
+            out['options'] = out['options'].split(',')
+        else:
+            out['options'] = []
+        
+        return out
+    
+    @staticmethod
+    def readOrdersORM(orders: Orders) -> Order:
+        return Order(**{
+            'orderID': orders.orderID,
+            'customer': orders.customer,
+            'dateReceived': orders.dateReceived,
+            'timeReceived': orders.timeReceived,
+            'timeComplete': orders.timeComplete,
+            'drinks': [PydanticORM.readDrinksORM(d) for d in (orders.drinks or [])]
+        })
 
 class ConnectionManager:
     def __init__(self):
