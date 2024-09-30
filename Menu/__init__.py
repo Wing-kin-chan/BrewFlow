@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List
 from datetime import date, time
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 class Drink(BaseModel):
     orderID: Optional[int]
@@ -19,7 +19,11 @@ class Drink(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        object.__setattr__(self, 'identifier', id(self))
+        if not data.get('identifier'):
+            object.__setattr__(self, 'identifier', id(self))
+
+    def __hash__(self):
+        return hash(self.identifier)
 
     def __eq__(self, other):
         if isinstance(other, Drink):
@@ -86,7 +90,7 @@ class Order(BaseModel):
                 self.dateReceived == other.dateReceived and
                 self.timeReceived == other.timeReceived and
                 self.timeComplete == other.timeComplete and
-                self.drinks == other.drinks
+                Counter(self.drinks) == Counter(other.drinks)
             )
         return False
 
