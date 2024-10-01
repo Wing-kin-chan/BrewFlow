@@ -1,35 +1,51 @@
-from fastapi import FastAPI, Request, Form, BackgroundTasks, WebSocket, HTTPException
+from fastapi import FastAPI, Request, Form, WebSocket, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
 from Manager.app.scripts.queueManager import Queue
-from Manager.app.scripts.services import ConnectionManager, FormData, JSONList
+from Manager.app.scripts.services import ConnectionManager, FormData, Utils
+
 from typing import Optional
-from Menu import Order
+from contextlib import asynccontextmanager
+from Manager.app.models import Order
 import os, json, uuid, logging
 
-RELATIVE_PATH = "../Menu/menu.json"
-MENU_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), RELATIVE_PATH
-)
 
-app = FastAPI()
-global queue
-queue = Queue()
-connectionManager = ConnectionManager()
+################################################### PATH VARIABLES AND DATA ##################################################
 
+RELATIVE_PATH = "./config/config.json"
+CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), RELATIVE_PATH)
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "app/static")
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "app/templates")
-ENDPOINT = uuid.uuid4().hex
+DATABASE_URI = "sqlite+aiosqlite:///" + os.path.join(os.path.dirname(__file__), "app/data/", "database.db")
 
+with open(CONFIG_FILE_PATH, 'r') as f:
+    data = json.load(f)
+    MILK_COLORS = data.get('MILK_COLORS')
+    PORT = data.get('PORT')
+    ENDPOINT = data.get('ENDPOINT')
+    LOGGING_CONFIG = data.get('LOGGING')
+
+ADDRESS = Utils.getAddress()
+
+if not ENDPOINT:
+    ENDPOINT = uuid.uuid4().hex
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global queue
+    queue = await Queue.create(DATABASE_URI)
+    await queue.load_from_db()
+    yield
+    if queue and queue.connection:
+        await queue.connection.close()
+
+app = FastAPI(lifespan = lifespan)
+connectionManager = ConnectionManager()
 app.mount("/static", StaticFiles(directory = STATIC_DIR), name = "static")
 templates = Jinja2Templates(directory = TEMPLATE_DIR)
 
-with open(MENU_FILE_PATH, 'r') as f:
-    data = json.load(f)
-    MILK_COLORS = data.get('MILK_COLORS')
-    ADDRESS = data.get('ADDRESS')
-    PORT = data.get('PORT')
 
 ################################################## MAIN ######################################################
 
@@ -47,7 +63,7 @@ async def index(request: Request):
 @app.post("/complete")
 async def complete(
     selectedDrinkIDs: Optional[str] = Form(default = '[]'),
-    selectedItemIndex: Optional[str] = Form(default = None)
+    selectedItemIndex: Optional[str] = Form(default = None),
 ):
     try:
         form_data = FormData(
@@ -56,11 +72,10 @@ async def complete(
         )
 
         if form_data.selectedDrinkIDs:
-            queue.completeDrinks(form_data.selectedDrinkIDs.root)
-            logging.info(f'Completed drinks: {form_data.selectedDrinkIDs.root}')
+            await queue.completeDrinks(form_data.selectedDrinkIDs.root)
+
         if form_data.selectedItemIndex is not None:
-            queue.completeItem(form_data.selectedItemIndex)
-            logging.info(f'Completed Order at idx: {form_data.selectedItemIndex}')
+            await queue.completeItem(form_data.selectedItemIndex)
 
         return JSONResponse(content = {
             'updatedOrderList': [order.model_dump_json() for order in queue.orders],
@@ -99,7 +114,7 @@ async def newOrder(websocket: WebSocket):
     finally:
         connectionManager.disconnect(websocket)
 
-@app.post(f"/receive")
+@app.post(f"/{ENDPOINT}")
 async def receiveData(request: Request):
     data = await request.json()
     try:
@@ -107,7 +122,7 @@ async def receiveData(request: Request):
     except:
         return None 
 
-    queue.addOrder(order)
+    await queue.addOrder(order, update_db=True)
     queue_data = {
         "orders": [order.model_dump_json() for order in queue.orders],
         "totalOrders": queue.totalOrders,
@@ -118,5 +133,12 @@ async def receiveData(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    logging.info(f'Receive orders on: 127.0.0.1:8080/{ENDPOINT}')
-    uvicorn.run(app, host = ADDRESS, port = PORT)
+    log_config = LOGGING_CONFIG
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info(f'Send orders in JSON to: {ADDRESS}:{PORT}/{ENDPOINT}')
+    uvicorn.run(app, 
+                host=ADDRESS, 
+                port=PORT, 
+                reload=True,
+                reload_excludes=[DATABASE_URI,])
+    
