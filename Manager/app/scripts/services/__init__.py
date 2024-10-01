@@ -1,12 +1,12 @@
 from pydantic import BaseModel, Field, RootModel
 from typing import List, Optional
 from fastapi import WebSocket
-from Manager.app.models import Drink, Order
+from Manager.app.models import Order
 from Manager.app.models.db import Drinks, Orders
-import json
+import json, socket
 
 class JSONList(RootModel):
-    root: List[int]
+    root: List[str]
 
     @classmethod
     def __get_validators__(cls):
@@ -26,7 +26,7 @@ class JSONList(RootModel):
         if not value:
             return cls(root = [])
         
-        return [int(item) for item in value]
+        return [str(item) for item in value]
     
 class FormData(BaseModel):
     selectedDrinkIDs: JSONList = Field(default_factory = lambda: JSONList(root = []))
@@ -68,3 +68,13 @@ class ConnectionManager:
     async def broadcast(self, message: dict):
         for connection in self.active_connections:
             await connection.send_text(message)
+
+class Utils:
+    def getAddress() -> str:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(("8.8.8.8", 80))
+            ipv4_address = s.getsockname()[0]
+        finally:
+            s.close()
+        return ipv4_address
