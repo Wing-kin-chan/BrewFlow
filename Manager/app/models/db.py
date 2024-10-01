@@ -27,7 +27,7 @@ class Orders(Base):
 class Drinks(Base):
     __tablename__ = 'drinks'
     
-    identifier: Mapped[int] = mapped_column(Integer, primary_key=True)
+    identifier: Mapped[str] = mapped_column(String, primary_key=True)
     orderID: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('orders.orderID', ondelete="CASCADE"))
     drink: Mapped[str] = mapped_column(String)
     milk: Mapped[Optional[str]] = mapped_column(String, nullable=True)

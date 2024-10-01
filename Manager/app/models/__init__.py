@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List
 from datetime import date, time
 from collections import defaultdict, Counter
+import uuid
 
 class Drink(BaseModel):
     orderID: Optional[int]
@@ -13,14 +14,14 @@ class Drink(BaseModel):
     texture: Optional[str]
     options: List[str]
     customer: Optional[str]
-    identifier: int = Field(default_factory = lambda: 0, init = False)
+    identifier: Optional[str] = Field(default_factory = lambda: f'_id_{str(uuid.uuid4())}', init = False)
     timeReceived: Optional[time]
     timeComplete: Optional[time]
 
     def __init__(self, **data):
         super().__init__(**data)
         if not data.get('identifier'):
-            object.__setattr__(self, 'identifier', id(self))
+            object.__setattr__(self, 'identifier', f'_id_{str(uuid.uuid4())}')
 
     def __hash__(self):
         return hash(self.identifier)
