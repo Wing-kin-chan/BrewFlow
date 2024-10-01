@@ -70,7 +70,7 @@ function updateOrderList(queue, totalOrders, totalDrinks) {
 
             const drinkHTML = `
                 <li>
-                    <div class="drink-card" id="drink-${drink.identifier}" onclick="selectDrink(${drink.identifier}, event)">
+                    <div class="drink-card" id="drink-${drink.identifier}" onclick="selectDrink('${drink.identifier}', event)">
                         <div class="drink-card-header ${drink.milk}">
                             <span class="drink-name">${drink.drink}</span>
                             ${drinkCustomerHTML}
