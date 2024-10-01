@@ -1,6 +1,9 @@
 from Manager.app.models import Drink, Order
+from Manager.app.scripts.services.CRUD import Connection
+
 from pydantic import BaseModel
-from typing import List, Set, Union
+
+from typing import List, Set, Union, Optional
 from itertools import product
 from datetime import datetime
 import logging, json, os, copy
@@ -90,7 +93,14 @@ class Queue:
         self.OrdersComplete: int = 0
         self.DrinksComplete: int = 0
         self.initialize_lookupTable()
+        self.connection: Optional[Connection] = None
+
         
+    @classmethod
+    async def create(cls, URI: str):
+        self = cls()
+        self.connection = await Connection.new(URI)
+        return self
 
     def initialize_lookupTable(self):
         RELATIVE_PATH = "../../../config/config.json"
@@ -110,15 +120,29 @@ class Queue:
             f"{milk}_{texture}": set() for milk, texture in COMBINATIONS
         }
 
+    async def load_from_db(self) -> None:
+        orders = await self.connection.getQueue()
+
+        for order in orders:
+            self.orderHistory.insert(0, order)
+            if order.timeComplete:
+                self.DrinksComplete += len(order.drinks)
+                continue
+            else:
+                live_order = copy.deepcopy(order)
+                live_order.drinks = [
+                    d for d in live_order.drinks if not d.timeComplete
+                ]
+                await self.addOrder(live_order, update_db=False)
+                self.DrinksComplete += len(order.drinks) - len(live_order.drinks)
+        return None
+
     def __repr__(self):
-        # Basic info about the Queue instance
         output = [f"Queue Instance @{hex(id(self))}:\n", "Orders:\n"]
 
-        # Adding each order's repr along with its index
         for index, order in enumerate(self.orders):
             output.append(f"{index:<5} {repr(order)}\n")
 
-        # Summary of the total drinks and orders
         output.append(f"\nDrinks in Queue: {self.totalDrinks}")
         output.append(f"\nOrders in Queue: {self.totalOrders}\n")
 
@@ -163,12 +187,15 @@ class Queue:
             elif v:
                 self.lookupTable[k] = set(i+1 if i > position - 1 else i for i in v)
 
-    def addOrder(self, order: Order) -> None:
+    async def addOrder(self, order: Order, update_db: bool) -> None:
         self.orders.append(order)
         self.orderHistory.insert(0, copy.deepcopy(order))
         new_order_index = len(self.orders) - 1
         self.totalOrders += 1
         self.totalDrinks += len(order.drinks)
+        
+        if update_db:
+            await self.connection.addOrder(order)
 
         # If order has mutiple drinks, you may want to batch drinks with others
         # near the original order's position, else if it a single drink
@@ -243,7 +270,7 @@ class Queue:
         self._clean_empty_orders()
 
 
-    def completeDrinks(self, drink_identifiers: List[int]) -> None:
+    async def completeDrinks(self, drink_identifiers: List[int]) -> None:
         """
         Logic to complete one or more drinks and remove it from the preparation list.
 
@@ -260,16 +287,18 @@ class Queue:
         for order in self.orderHistory:
             for drink in order.drinks:
                 if drink.identifier in drink_identifiers:
+                    await self.connection.completeDrink(drink.identifier, time_complete)
                     drink.timeComplete = time_complete
             
             if all([drink.timeComplete for drink in order.drinks]):
+                await self.connection.completeOrder(order.orderID, time_complete)
                 order.timeComplete = time_complete
         
         self.totalDrinks -= len(drink_identifiers)
         self.DrinksComplete += len(drink_identifiers)
         self._clean_empty_orders()
 
-    def completeItem(self, index: int) -> None:
+    async def completeItem(self, index: int) -> None:
         """
         Logic to complete an entire Batch or Order and remove it from the preparation list.
 
@@ -277,7 +306,7 @@ class Queue:
             - index: int index of the item to be completed.
         """
         drink_identifiers = [d.identifier for d in self.orders[index].drinks]
-        self.completeDrinks(drink_identifiers)
+        await self.completeDrinks(drink_identifiers)
         self.remove_item_from_lookupTable(index)
         self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
 
