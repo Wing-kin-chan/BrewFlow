@@ -192,7 +192,7 @@ class TestUpdateOperations:
 class TestReadOperations:
     @pytest.mark.asyncio
     async def test_getQueue(self, connection, adam_order, hannah_order):
-        queue: List[Order] = [hannah_order, adam_order]
+        queue: List[Order] = [adam_order, hannah_order]
         try:
             conn: Connection = await connection
             await conn.addOrder(adam_order)

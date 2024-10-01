@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import desc, text
+from sqlalchemy import asc, text
 
 from Manager.app.models.db import Orders, Drinks, Database, AsyncSession
 from Manager.app.scripts.services import PydanticORM
@@ -37,6 +37,7 @@ class Connection:
             for drink in order.drinks:
                 db_drink = Drinks(
                     orderID = order.orderID,
+                    customer = drink.customer,
                     drink = drink.drink,
                     milk = drink.milk,
                     milk_volume = drink.milk_volume,
@@ -94,7 +95,7 @@ class Connection:
         query = (
             select(Orders)
             .options(selectinload(Orders.drinks))
-            .order_by(desc(Orders.timeReceived))
+            .order_by(asc(Orders.timeReceived))
         )
         result = await self.session.execute(query)
 
