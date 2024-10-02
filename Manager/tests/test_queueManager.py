@@ -161,32 +161,35 @@ class TestQueueInitialization:
 
 
 class TestQueueOperations:
-    def test_add_order(self, queue, orders):
+    @pytest.mark.asyncio
+    async def test_add_order(self, queue, orders):
         order = next(o for o in orders if o.drinks[0].milk != "No Milk" and len(o.drinks) == 1)
         milk_type = f"{order.drinks[0].milk}_{order.drinks[0].texture}"
         
-        queue.addOrder(order)
+        await queue.addOrder(order, update_db=False)
         
         assert len(queue.orders) == 1
         assert queue.orders[0] == order
         assert 0 in queue.lookupTable[milk_type]
 
-    def test_complete_item(self, queue):
+    @pytest.mark.asyncio
+    async def test_complete_item(self, queue):
         assert queue.orderHistory[0].timeComplete is None
-        queue.completeItem(0)
+        await queue.completeItem(0)
         assert queue.orderHistory[0].timeComplete is not None
         assert len(queue.orders) == 0
 
 
 class TestOrderBatching:
-    def test_order_batching(self, 
+    @pytest.mark.asyncio
+    async def test_order_batching(self, 
                             queue, 
                             jeff_order, 
                             hannah_order, 
                             oat_cappuccinos, 
                             soy_cappuccino):
-        queue.addOrder(jeff_order)
-        queue.addOrder(hannah_order)
+        await queue.addOrder(jeff_order, update_db=False)
+        await queue.addOrder(hannah_order, update_db=False)
 
         assert len(queue.orders) == 3
         assert queue.totalDrinks == 4
@@ -196,12 +199,14 @@ class TestOrderBatching:
         assert 1 in queue.lookupTable['Oat_Dry']
         assert 2 in queue.lookupTable['Soy_Dry']
 
-    def test_cross_order_batching(self, 
+    @pytest.mark.asyncio
+    async def test_cross_order_batching(self, 
                                   queue, 
                                   adam_order, 
                                   kayleigh_order):
-        queue.addOrder(adam_order)
-        queue.addOrder(kayleigh_order)
+        
+        await queue.addOrder(adam_order, update_db=False)
+        await queue.addOrder(kayleigh_order, update_db=False)
 
         assert len(queue.orders) == 4
         assert queue.totalOrders == 4
@@ -211,12 +216,13 @@ class TestOrderBatching:
 
 
 class TestCompleteDrinks:
-    def test_complete_drinks(self,
+    @pytest.mark.asyncio
+    async def test_complete_drinks(self,
                              queue, 
                              soy_cappuccino, 
                              jeff_order,
                              ):
-        queue.completeDrinks([soy_cappuccino.identifier, jeff_order.drinks[0].identifier])
+        await queue.completeDrinks([soy_cappuccino.identifier, jeff_order.drinks[0].identifier])
         assert queue.totalDrinks == 4
         assert queue.totalOrders == 3
         assert len(queue.orders) == 2

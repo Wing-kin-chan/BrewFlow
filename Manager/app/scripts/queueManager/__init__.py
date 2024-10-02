@@ -287,12 +287,14 @@ class Queue:
         for order in self.orderHistory:
             for drink in order.drinks:
                 if drink.identifier in drink_identifiers:
-                    await self.connection.completeDrink(drink.identifier, time_complete)
                     drink.timeComplete = time_complete
+                    if self.connection:
+                        await self.connection.completeDrink(drink.identifier, time_complete)
             
             if all([drink.timeComplete for drink in order.drinks]):
-                await self.connection.completeOrder(order.orderID, time_complete)
                 order.timeComplete = time_complete
+                if self.connection:
+                    await self.connection.completeOrder(order.orderID, time_complete)
         
         self.totalDrinks -= len(drink_identifiers)
         self.DrinksComplete += len(drink_identifiers)
