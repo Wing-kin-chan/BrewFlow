@@ -1,7 +1,7 @@
 import pytest
 from typing import List
-from datetime import datetime
-from sqlalchemy import select, func
+from datetime import datetime, timedelta
+from sqlalchemy import select, asc
 from sqlalchemy.orm import joinedload
 
 from Manager.app.scripts.services.CRUD import Connection
@@ -43,6 +43,32 @@ def adam_order():
         'timeReceived': time,
         'customer': 'Adam',
         'drinks': [adam_drink],
+        'timeComplete': None
+    })
+
+@pytest.fixture(scope='session')
+def jeff_order():
+    today = datetime.now().date()
+    yesterday = today - timedelta(days = 1)
+    time =  datetime.now().time()
+    jeff_drink = {
+        'orderID': 56789,
+        'drink': 'Latte',
+        'milk': 'Whole',
+        'milk_volume': 2,
+        'shots': 2,
+        'temperature': None,
+        'texture': 'Wet',
+        'options': [],
+        'customer': 'Jeff',
+        'timeComplete': None
+    }
+    return Order.model_validate({
+        'orderID': 56789,
+        'dateReceived': yesterday,
+        'timeReceived': time,
+        'customer': 'Jeff',
+        'drinks': [jeff_drink],
         'timeComplete': None
     })
 
@@ -191,12 +217,14 @@ class TestUpdateOperations:
 
 class TestReadOperations:
     @pytest.mark.asyncio
-    async def test_getQueue(self, connection, adam_order, hannah_order):
+    async def test_getQueue(self, connection, adam_order, hannah_order, jeff_order):
         queue: List[Order] = [adam_order, hannah_order]
         try:
             conn: Connection = await connection
+            await conn.addOrder(jeff_order)
             await conn.addOrder(adam_order)
             await conn.addOrder(hannah_order)
+
             result = await conn.getQueue()
 
             for recall, original in zip(result, queue):
@@ -224,5 +252,36 @@ class TestDeleteOperations:
             
             assert orders_result is None and drinks_result is None
         
+        finally:
+            await conn.close()
+
+    @pytest.mark.asyncio
+    async def test_clearOldRecords(self, connection, adam_order, hannah_order, jeff_order):
+        queue: List[Order] = [adam_order, hannah_order]
+        try:
+            conn: Connection = await connection
+            await conn.addOrder(jeff_order)
+            await conn.addOrder(adam_order)
+            await conn.addOrder(hannah_order)
+            
+            await conn.clearOldRecords()
+
+            result = await conn.session.execute(
+                select(Orders).
+                options(joinedload(Orders.drinks)).
+                order_by(asc(Orders.timeReceived))
+            )
+
+            result: List[Orders] = result.unique().scalars().all()
+
+            for obj, original in zip(result, queue):
+                order = PydanticORM.readOrdersORM(obj)
+                assert order.orderID == original.orderID
+                assert order.customer == original.customer
+                assert order.timeReceived == original.timeReceived
+                assert order.timeComplete == original.timeComplete
+                assert order.dateReceived == original.dateReceived
+                assert set(order.drinks) == set(original.drinks)
+            
         finally:
             await conn.close()

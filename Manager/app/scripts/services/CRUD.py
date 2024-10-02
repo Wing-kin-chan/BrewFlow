@@ -7,7 +7,7 @@ from Manager.app.scripts.services import PydanticORM
 
 from Manager.app.models import Order
 from typing import List
-from datetime import time
+from datetime import time, date
 
 
 class Connection:
@@ -89,11 +89,16 @@ class Connection:
 
     async def getQueue(self) -> List[Order]:
         '''
-        This function returns a list of order objects and their respective drinks.
+        This function returns a list of order objects and their respective drinks. Will only fetch
+        orders and their respective drinks that were made on the same day as the function call.
+
+        Used to repopulate instance of Queue() class should application be restarted for any reason.
         '''
-        
+        current_date = date.today()
+
         query = (
             select(Orders)
+            .where(Orders.dateReceived == current_date)
             .options(selectinload(Orders.drinks))
             .order_by(asc(Orders.timeReceived))
         )
@@ -107,13 +112,29 @@ class Connection:
         return queue
     
 
-    async def clearQueue(self) -> None:
-        '''Clears all records from local storage'''
+    async def clearOldRecords(self) -> None:
+        '''Clears all records from previous day from local storage'''
+        current_date = date.today()
         try:
-            await self.session.execute(text("DELETE FROM drinks"))
-            await self.session.execute(text("DELETE FROM orders"))
+            old_orders = await self.session.execute(
+                select(Orders).where(Orders.dateReceived < current_date)
+            )
+            old_orders = old_orders.scalars().all()
+
+            for order in old_orders:
+                await self.session.delete(order)
+
             await self.session.commit()
         
         except Exception as e:
             await self.session.rollback()
             raise e
+        
+    async def clearQueue(self) -> None:
+        try:
+            await self.session.execute(text("DELETE FROM drinks"))
+            await self.session.execute(text("DELETE FROM orders"))
+            await self.session.commit()  
+        except Exception as e:
+            await self.session.rollback()
+            raise e          
