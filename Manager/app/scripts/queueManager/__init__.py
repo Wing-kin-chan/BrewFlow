@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import List, Set, Union, Optional
 from itertools import product
 from datetime import datetime
-import logging, json, os, copy
+import logging, json, os, copy, asyncio
 
 logging.basicConfig(level = logging.DEBUG)
 
@@ -87,22 +87,23 @@ class Queue:
 
     def __init__(self):
         self.orders: List[Order, Batch] = []
-        self.orderHistory : List[Order] =[]
+        self.orderHistory: List[Order] = []
+        self.orderHistoryIndex: dict = {}
         self.totalOrders: int = 0
         self.totalDrinks: int = 0
         self.OrdersComplete: int = 0
         self.DrinksComplete: int = 0
-        self.initialize_lookupTable()
+        self._initialize_lookupTable()
         self.connection: Optional[Connection] = None
 
-        
+################################################# INIT AND DUNDER METHODS #######################################################        
     @classmethod
     async def create(cls, URI: str):
         self = cls()
         self.connection = await Connection.new(URI)
         return self
 
-    def initialize_lookupTable(self):
+    def _initialize_lookupTable(self):
         RELATIVE_PATH = "../../../config/config.json"
         CONFIG_FILE_PATH = os.path.join(
             os.path.dirname(__file__), RELATIVE_PATH
@@ -120,7 +121,7 @@ class Queue:
             f"{milk}_{texture}": set() for milk, texture in COMBINATIONS
         }
 
-    async def load_from_db(self) -> None:
+    async def _load_from_db(self) -> None:
         orders = await self.connection.getQueue()
 
         for order in orders:
@@ -147,8 +148,10 @@ class Queue:
         output.append(f"\nOrders in Queue: {self.totalOrders}\n")
 
         return "".join(output)
+    
 
-    def remove_item_from_lookupTable(self, position: int) -> None:
+########################################## PRIVATE LOOKUPTABLE & DATA MANIPULATION METHODS ##########################################
+    def _remove_item_from_lookupTable(self, position: int) -> None:
         '''
         When an item is removed at queue position/index N,
         all values of N are purged from the lookup table.
@@ -162,34 +165,46 @@ class Queue:
             self.lookupTable[k] = set(i-1 if i > position else i for i in v)
     
     def _clean_empty_orders(self):
+        'Drops orders with no drinks in order.drinks from self.orders'
         i = 0
         while i < len(self.orders):
             if not self.orders[i].drinks:
                 self.orders.pop(i)
-                self.remove_item_from_lookupTable(i)               
+                self._remove_item_from_lookupTable(i)
             else:
                 i += 1
-        
+
         self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
 
-    def update_lookupTable_on_Batch(self, position: int, milk_type: str) -> None:
+    def _update_lookupTable_on_Batch(self, position: int, milk_type: str) -> None:
         '''
-        Batches are always created immediately after an existing order;
-        If Order (O) at index N, has drink A, and A is added to Batch (B),
-        orders.index(B) == orders.index(O) + 1.
-
-        Thus if A has an index i in the lookupTable, within the key of A's
-        corresponding milk type, we need to update A's index to reflect the batch's position.
+        Batches are always created immediately infront of an existing order. Therefore if a new order
+        spawns batches infront of its own position in the queue, everything that is behind the new batch's
+        position (i) in the queue, needs to have its index in the lookupTable incremented by +1 for each new batch.
         '''
         for k, v in self.lookupTable.items():
-            if k == milk_type:
-                self.lookupTable[k] = set(i+1 if i >= position - 1 else i for i in v)
+            if not v:
+                continue
             elif v:
                 self.lookupTable[k] = set(i+1 if i > position - 1 else i for i in v)
 
+
+################################################# PUBLIC METHODS ##########################################################
     async def addOrder(self, order: Order, update_db: bool) -> None:
         self.orders.append(order)
         self.orderHistory.insert(0, copy.deepcopy(order))
+
+        # Update orderHistory hashmap
+        # Previous implimentation of Queue did not have orderHistoryIndex leading to traversal of entire orderHistory list
+        # to update timeComplete in both orders and another nested traversal of the drinks list in each order.
+        # This lead to minimum quadratic time complexity (frontend waiting 3 seconds to respond).
+        # Now impliment hashmap to keep track of the index of orderIDs as well as what drinkIDs they have.
+        self.orderHistoryIndex[order.orderID] = {
+            'drinkIDs': set(d.identifier for d in order.drinks),
+            'index': -1} 
+        for idx in self.orderHistoryIndex.keys():
+            self.orderHistoryIndex[idx]['index'] += 1
+
         new_order_index = len(self.orders) - 1
         self.totalOrders += 1
         self.totalDrinks += len(order.drinks)
@@ -214,12 +229,12 @@ class Queue:
                         batch = Batch()
                         list(map(lambda drink: batch.add_drink(drink), group)) # Add drinks to batch
                         list(map(lambda drink: order.drinks.remove(drink), group)) # Remove drink from original order
-                        self.orders.insert(new_order_index, batch)
+                        self.orders.insert(new_order_index, batch) # Batch is inserted in front of original order
                         try:
                             self.lookupTable[f"{batch.milk}_{batch.texture}"].add(new_order_index)
                         except KeyError:
                             continue
-                        new_order_index += 1
+                        new_order_index += 1 # Batch inserted infront so new order is moved back in the queue by one
                     else:
                         continue
 
@@ -258,16 +273,16 @@ class Queue:
                             batch.add_drink(d)
                         list(map(lambda d: existing_order.drinks.remove(d), similar_drinks))
                         order.drinks.remove(drink)
-                        self.orders.insert(index + 1, batch)
+                        self.orders.insert(index, batch)
                         new_order_index += 1
-                        self.update_lookupTable_on_Batch(index + 1, milk_type)
+                        self._update_lookupTable_on_Batch(index + 1, milk_type)
                         batch_found = True
                         break
 
             if not batch_found:
                 self.lookupTable[milk_type].add(new_order_index)
         
-        self._clean_empty_orders()
+        self._clean_empty_orders() 
 
 
     async def completeDrinks(self, drink_identifiers: List[int]) -> None:
@@ -278,27 +293,42 @@ class Queue:
             - drink_identifiers: List[int] list of drink identifiers that are to be removed from the queue
         """
         time_complete = datetime.now().time()
+        # Use sets for O(1) time complexity
+        complete_drink_identifier_set: set[int] = set(drink_identifiers)
+        order_identifier_set: set[int] = set() 
 
-        for order in self.orders:
-            order.drinks = [
-                drink for drink in order.drinks if drink.identifier not in drink_identifiers
-            ]
-        
-        for order in self.orderHistory:
+        for item in self.orders:
+            item_drinkIDs = set(d.identifier for d in item.drinks)
+            if complete_drink_identifier_set & item_drinkIDs:
+                for drink in item.drinks:
+                    if drink.identifier in drink_identifiers:
+                        order_identifier_set.add(drink.orderID) # Add drink's parent order to list of orders to be updated
+                item.drinks = [
+                    drink for drink in item.drinks if drink.identifier not in drink_identifiers
+                ]
+
+        self._clean_empty_orders()
+
+        for orderID in order_identifier_set:
+            idx = self.orderHistoryIndex[orderID]['index']
+            order = self.orderHistory[idx]
+
             for drink in order.drinks:
-                if drink.identifier in drink_identifiers:
+                if drink.identifier in complete_drink_identifier_set:
                     drink.timeComplete = time_complete
                     if self.connection:
                         await self.connection.completeDrink(drink.identifier, time_complete)
-            
-            if all([drink.timeComplete for drink in order.drinks]):
-                order.timeComplete = time_complete
+
+            if all(drink.timeComplete for drink in order.drinks):
+                self.orderHistory[idx].timeComplete = time_complete
+                self.OrdersComplete += 1
                 if self.connection:
                     await self.connection.completeOrder(order.orderID, time_complete)
-        
-        self.totalDrinks -= len(drink_identifiers)
-        self.DrinksComplete += len(drink_identifiers)
-        self._clean_empty_orders()
+
+        self.totalDrinks -= len(complete_drink_identifier_set)
+        self.DrinksComplete += len(complete_drink_identifier_set)
+        self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
+
 
     async def completeItem(self, index: int) -> None:
         """
@@ -309,8 +339,7 @@ class Queue:
         """
         drink_identifiers = [d.identifier for d in self.orders[index].drinks]
         await self.completeDrinks(drink_identifiers)
-        self.remove_item_from_lookupTable(index)
-        self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
+        
 
     def getCompletedItems(self) -> List[Order]:
         out = []
@@ -321,6 +350,7 @@ class Queue:
                 order_copy.drinks = completed_drinks
                 out.append(order_copy)
         return out
+
 
     def countCompletedOrders(self) -> int:
         return len([order for order in self.orderHistory if order.timeComplete])

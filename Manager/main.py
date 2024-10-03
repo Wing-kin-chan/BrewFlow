@@ -36,7 +36,7 @@ if not ENDPOINT:
 async def lifespan(app: FastAPI):
     global queue
     queue = await Queue.create(DATABASE_URI)
-    await queue.load_from_db()
+    await queue._load_from_db()
     yield
     if queue and queue.connection:
         await queue.connection.close()
@@ -114,7 +114,7 @@ async def newOrder(websocket: WebSocket):
     finally:
         connectionManager.disconnect(websocket)
 
-@app.post(f"/{ENDPOINT}")
+@app.post(f"/receive")
 async def receiveData(request: Request):
     data = await request.json()
     try:
