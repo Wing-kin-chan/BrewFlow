@@ -174,6 +174,10 @@ submitButton.addEventListener('click', function(event) {
 
         updateOrderList(queue, totalOrders, totalDrinks);
     })
+    .then(
+        selectedDrinkIDs = [],
+        selectedItemIndex = null
+    )
     .catch(error => {
         console.error('Error:', error)
     });
