@@ -327,7 +327,6 @@ class Queue:
 
         self.totalDrinks -= len(complete_drink_identifier_set)
         self.DrinksComplete += len(complete_drink_identifier_set)
-        self.totalOrders = len(set(drink.orderID for order in self.orders for drink in order.drinks))
 
 
     async def completeItem(self, index: int) -> None:
