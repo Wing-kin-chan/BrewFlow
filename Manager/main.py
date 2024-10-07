@@ -133,9 +133,13 @@ async def receiveData(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
+
     log_config = LOGGING_CONFIG
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.DEBUG)
+    logging.getLogger("sqlalchemy.pool").setLevel(logging.INFO)
     logging.info(f'Send orders in JSON to: {ADDRESS}:{PORT}/{ENDPOINT}')
+
     uvicorn.run(app, 
                 host=ADDRESS, 
                 port=PORT, 
