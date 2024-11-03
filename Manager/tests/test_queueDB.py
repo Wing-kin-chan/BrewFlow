@@ -3,6 +3,7 @@ from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy import select, asc
 from sqlalchemy.orm import joinedload
+import uuid
 
 from Manager.app.scripts.services.CRUD import Connection
 from Manager.app.scripts.services import PydanticORM
@@ -25,8 +26,9 @@ async def connection() -> Connection:
 @pytest.fixture(scope='session')
 def adam_order():
     date, time = datetime.now().date(), datetime.now().time()
+    orderID = uuid.uuid4().hex
     adam_drink = {
-        'orderID': 12345,
+        'orderID': orderID,
         'drink': 'Latte',
         'milk': 'Whole',
         'milk_volume': 2,
@@ -38,7 +40,7 @@ def adam_order():
         'timeComplete': None
     }
     return Order.model_validate({
-        'orderID': 12345,
+        'orderID': orderID,
         'dateReceived': date,
         'timeReceived': time,
         'customer': 'Adam',
@@ -51,8 +53,9 @@ def jeff_order():
     today = datetime.now().date()
     yesterday = today - timedelta(days = 1)
     time =  datetime.now().time()
+    orderID = uuid.uuid4().hex
     jeff_drink = {
-        'orderID': 56789,
+        'orderID': orderID,
         'drink': 'Latte',
         'milk': 'Whole',
         'milk_volume': 2,
@@ -64,7 +67,7 @@ def jeff_order():
         'timeComplete': None
     }
     return Order.model_validate({
-        'orderID': 56789,
+        'orderID': orderID,
         'dateReceived': yesterday,
         'timeReceived': time,
         'customer': 'Jeff',
@@ -75,9 +78,10 @@ def jeff_order():
 @pytest.fixture(scope='session')
 def hannah_order():
     date, time = datetime.now().date(), datetime.now().time()
+    orderID = uuid.uuid4().hex
     hannah_drinks = [
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Oat',
             'milk_volume': 2,
@@ -89,7 +93,7 @@ def hannah_order():
             'timeComplete': None
         },
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Oat',
             'milk_volume': 2,
@@ -101,7 +105,7 @@ def hannah_order():
             'timeComplete': None
         },
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Soy',
             'milk_volume': 2,
@@ -114,7 +118,7 @@ def hannah_order():
         }
     ]
     return Order.model_validate({
-        'orderID': 23456,
+        'orderID': orderID,
         'customer': 'Hannah',
         'dateReceived': date,
         'timeReceived': time,

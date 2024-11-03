@@ -11,7 +11,7 @@ def test_fetchOrders():
     assert hasattr(order, 'timeComplete')
     assert hasattr(order, 'drinks')
 
-    assert isinstance(order.orderID, int)
+    assert isinstance(order.orderID, str)
     assert isinstance(order.customer, str)
     assert isinstance(order.dateReceived, date)
     assert isinstance(order.timeReceived, time)
@@ -35,7 +35,7 @@ def test_fetchOrders():
         assert drink.orderID == orderID
         assert drink.customer == orderOwner
 
-        assert isinstance(drink.orderID, int)
+        assert isinstance(drink.orderID, str)
         assert isinstance(drink.customer, str)
         assert isinstance(drink.drink, str)
         assert isinstance(drink.milk, str)

@@ -1,7 +1,6 @@
 import pytest
 from datetime import datetime
-import logging
-import sys
+import logging, sys, uuid
 from tqdm import trange
 
 from Manager.app.scripts.queueManager import Queue, Batch, fetchOrder
@@ -23,8 +22,9 @@ def queue() -> Queue:
 @pytest.fixture(scope='session')
 def jeff_order(date_time):
     date, time = date_time
+    orderID = uuid.uuid4().hex
     jeff_drink = {
-        'orderID': 1,
+        'orderID': orderID,
         'drink': 'double_espresso',
         'milk': 'No Milk',
         'milk_volume': 0,
@@ -36,7 +36,7 @@ def jeff_order(date_time):
         'timeComplete': None
     }
     return Order.model_validate({
-        'orderID': 1,
+        'orderID': orderID,
         'dateReceived': date,
         'timeReceived': time,
         'customer': 'Jeff',
@@ -47,8 +47,9 @@ def jeff_order(date_time):
 @pytest.fixture(scope='session')
 def kayleigh_order(date_time):
     date, time = date_time
+    orderID = uuid.uuid4().hex
     kayleigh_drink = {
-        'orderID': 2,
+        'orderID': orderID,
         'drink': 'Flat White',
         'milk': 'Whole',
         'milk_volume': 1,
@@ -60,7 +61,7 @@ def kayleigh_order(date_time):
         'timeComplete': None
     }
     return Order.model_validate({
-        'orderID': 2,
+        'orderID': orderID,
         'dateReceived': date,
         'timeReceived': time,
         'customer': 'Kayleigh',
@@ -71,8 +72,9 @@ def kayleigh_order(date_time):
 @pytest.fixture(scope='session')
 def adam_order(date_time):
     date, time = date_time
+    orderID = uuid.uuid4().hex
     adam_drink = {
-        'orderID': 12345,
+        'orderID': orderID,
         'drink': 'Latte',
         'milk': 'Whole',
         'milk_volume': 2,
@@ -84,7 +86,7 @@ def adam_order(date_time):
         'timeComplete': None
     }
     return Order.model_validate({
-        'orderID': 12345,
+        'orderID': orderID,
         'dateReceived': date,
         'timeReceived': time,
         'customer': 'Adam',
@@ -95,9 +97,10 @@ def adam_order(date_time):
 @pytest.fixture(scope='session')
 def hannah_order(date_time):
     date, time = date_time
+    orderID = uuid.uuid4().hex
     hannah_drinks = [
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Oat',
             'milk_volume': 2,
@@ -109,7 +112,7 @@ def hannah_order(date_time):
             'timeComplete': None
         },
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Oat',
             'milk_volume': 2,
@@ -121,7 +124,7 @@ def hannah_order(date_time):
             'timeComplete': None
         },
         {
-            'orderID': 23456,
+            'orderID': orderID,
             'drink': 'Cappuccino',
             'milk': 'Soy',
             'milk_volume': 2,
@@ -134,7 +137,7 @@ def hannah_order(date_time):
         }
     ]
     return Order.model_validate({
-        'orderID': 23456,
+        'orderID': orderID,
         'customer': 'Hannah',
         'dateReceived': date,
         'timeReceived': time,
