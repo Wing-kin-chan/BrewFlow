@@ -5,7 +5,7 @@ from collections import defaultdict, Counter
 import uuid
 
 class Drink(BaseModel):
-    orderID: Optional[int]
+    orderID: Optional[str]
     drink: str 
     milk: Optional[str]
     milk_volume: float
@@ -66,7 +66,7 @@ class Drink(BaseModel):
         return result
 
 class Order(BaseModel):
-    orderID: int
+    orderID: str
     customer: str
     dateReceived: date
     timeReceived: time
