@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import List, Set, Union, Optional
 from itertools import product
 from datetime import datetime
-import logging, json, os, copy, asyncio
+import logging, json, os, copy
 
 logging.basicConfig(level = logging.DEBUG)
 
@@ -125,17 +125,17 @@ class Queue:
         orders = await self.connection.getQueue()
 
         for order in orders:
-            self.orderHistory.insert(0, order)
+            self._add_orderHistoryIndex(order)
             if order.timeComplete:
                 self.DrinksComplete += len(order.drinks)
                 continue
             else:
-                live_order = copy.deepcopy(order)
-                live_order.drinks = [
-                    d for d in live_order.drinks if not d.timeComplete
+                order_total_drinks = len(order.drinks)
+                order.drinks = [
+                    d for d in order.drinks if not d.timeComplete
                 ]
-                await self.addOrder(live_order, update_db=False)
-                self.DrinksComplete += len(order.drinks) - len(live_order.drinks)
+                await self.addOrder(order, update_db=False)
+                self.DrinksComplete += order_total_drinks - len(order.drinks)
         return None
 
     def __repr__(self):
@@ -151,6 +151,18 @@ class Queue:
     
 
 ########################################## PRIVATE LOOKUPTABLE & DATA MANIPULATION METHODS ##########################################
+    def _add_orderHistoryIndex(self, order) -> None:
+        '''
+        Updates the hashmap of orderID's and their position (index) in the orderHistory list when an order is added to
+        the orderHistory list.
+        '''
+        self.orderHistory.insert(0, copy.deepcopy(order))
+        self.orderHistoryIndex[order.orderID] = {
+            'drinkIDs': set(d.identifier for d in order.drinks),
+            'index': -1} 
+        for idx in self.orderHistoryIndex.keys():
+            self.orderHistoryIndex[idx]['index'] += 1
+    
     def _remove_item_from_lookupTable(self, position: int) -> None:
         '''
         When an item is removed at queue position/index N,
@@ -199,11 +211,7 @@ class Queue:
         # to update timeComplete in both orders and another nested traversal of the drinks list in each order.
         # This lead to minimum quadratic time complexity (frontend waiting 3 seconds to respond).
         # Now impliment hashmap to keep track of the index of orderIDs as well as what drinkIDs they have.
-        self.orderHistoryIndex[order.orderID] = {
-            'drinkIDs': set(d.identifier for d in order.drinks),
-            'index': -1} 
-        for idx in self.orderHistoryIndex.keys():
-            self.orderHistoryIndex[idx]['index'] += 1
+        self._add_orderHistoryIndex(order)
 
         new_order_index = len(self.orders) - 1
         self.totalOrders += 1
