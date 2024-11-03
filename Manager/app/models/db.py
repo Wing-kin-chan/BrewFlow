@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
 class Orders(Base):
     __tablename__ = 'orders'
     
-    orderID: Mapped[int] = mapped_column(Integer, primary_key=True)
+    orderID: Mapped[str] = mapped_column(String, primary_key=True)
     customer: Mapped[str] = mapped_column(String)
     dateReceived: Mapped[date] = mapped_column(Date)
     timeReceived: Mapped[time] = mapped_column(Time)
@@ -28,7 +28,7 @@ class Drinks(Base):
     __tablename__ = 'drinks'
     
     identifier: Mapped[str] = mapped_column(String, primary_key=True)
-    orderID: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('orders.orderID', ondelete="CASCADE"))
+    orderID: Mapped[Optional[str]] = mapped_column(String, ForeignKey('orders.orderID', ondelete="CASCADE"))
     drink: Mapped[str] = mapped_column(String)
     milk: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     milk_volume: Mapped[float] = mapped_column(Float, nullable = True)
