@@ -70,6 +70,7 @@ class ConnectionManager:
             await connection.send_text(message)
 
 class Utils:
+    @staticmethod
     def getAddress() -> str:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:

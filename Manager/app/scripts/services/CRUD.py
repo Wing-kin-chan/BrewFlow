@@ -56,7 +56,7 @@ class Connection:
             raise e
         
 
-    async def completeOrder(self, orderID: int, time: time) -> None:
+    async def completeOrder(self, orderID: str, time: time) -> None:
         '''Updates the timeComplete field for an order record with the respective orderID'''
         try:
             query = select(Orders).where(Orders.orderID == orderID)
@@ -98,9 +98,9 @@ class Connection:
 
         query = (
             select(Orders)
-            .where(Orders.dateReceived == current_date)
-            .options(selectinload(Orders.drinks))
+            .filter(Orders.dateReceived == current_date)
             .order_by(asc(Orders.timeReceived))
+            .options(selectinload(Orders.drinks))
         )
         result = await self.session.execute(query)
 
