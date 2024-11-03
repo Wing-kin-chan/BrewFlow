@@ -1,7 +1,7 @@
 from Manager.app.models import Order
 from Orders.app.generate_drink import generateDrink
 from datetime import datetime
-import requests, random
+import requests, random, uuid
 
 nameAPI_address = 'https://randomuser.me/api/?results=1&inc=name'
 
@@ -30,7 +30,7 @@ def generateOrder():
     now = datetime.now()
     order_date = now.date()
     order_time = now.time()
-    orderID = hash(customer + now.strftime('%H:%M:%S %d/%M/%Y'))
+    orderID = uuid.uuid4().hex
     seed = random.randint(0, 100)
     
     if 15 < seed < 40:
