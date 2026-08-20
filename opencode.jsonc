@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Route normal requests through the triage primary agent.
+  "default_agent": "triage",
+
+  // Primary -> specialist only. Specialists should not recursively spawn agents.
+  "subagent_depth": 1,
+
+  // Additional project instructions are combined with AGENTS.md.
+  "instructions": [
+    "docs/product.md",
+    "docs/architecture.md"
+  ],
+
+  // Keep project-local skills visible to agents.
+  "permission": {
+    "skill": {
+      "*": "allow"
+    }
+  }
+}
