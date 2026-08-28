@@ -1,7 +1,8 @@
 ---
 description: Highest-capability specialist for architecture, security, migrations, consequential ambiguity, production-critical debugging, and broad cross-cutting work.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: openai/gpt-5.6-sol
+reasoningEffort: high
 temperature: 0.1
 permission:
   external_directory: deny

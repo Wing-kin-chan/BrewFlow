@@ -30,6 +30,7 @@ jobs:
           ${{ runner.os }}-uv-
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install -r requirements.txt
     - name: Save cache
@@ -57,12 +58,13 @@ jobs:
         python-version: '3.11.9'
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install flake8 pytest
     - name: Lint with flake8
       run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   test-OrderGenerator:
     runs-on: ubuntu-latest
@@ -82,12 +84,13 @@ jobs:
         python-version: '3.11.9'
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install flake8 pytest
         if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
     - name: test-OrderAPI
       run: |
-        pytest Orders/tests/tests.py
+        uv run pytest Orders/tests/tests.py
 
   test-fetchOrder:
     runs-on: ubuntu-latest
@@ -107,13 +110,14 @@ jobs:
         python-version: '3.11.9'
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install flake8 pytest
         if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
     - name: Start FastAPI Server
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
-        uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
+        uv run uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
       env:
         PORT: 8000
     - name: Test fetchOrder API
@@ -121,7 +125,7 @@ jobs:
         BASE_URL: http://127.0.0.1:8000
       run: |
         sleep 5 #Wait for Uvicorn server to initialize
-        pytest Manager/tests/test_orderFetcher.py
+        uv run pytest Manager/tests/test_orderFetcher.py
 
   test-queueManager:
     runs-on: 'ubuntu-latest'
@@ -141,13 +145,14 @@ jobs:
         python-version: '3.11.9'
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install flake8 pytest
         if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
     - name: Start FastAPI Server
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
-        uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
+        uv run uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
       env:
         PORT: 8000
     - name: Test queueManager
@@ -155,7 +160,7 @@ jobs:
         BASEURL: http://127.0.0.1:8000
       run: |
         sleep 5 #Wait for Uvicorn server to start
-        pytest Manager/tests/test_queueManager.py
+        uv run pytest Manager/tests/test_queueManager.py
 
   test-queueDB:
     runs-on: 'ubuntu-latest'
@@ -175,9 +180,10 @@ jobs:
         python-version: '3.11.9'
     - name: Install dependencies
       run: |
+        uv venv
         uv pip install --upgrade pip
         uv pip install flake8 pytest
         if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
     - name: Run test-queueDB
       run: |
-        pytest Manager/tests/test_queueDB.py
+        uv run pytest Manager/tests/test_queueDB.py

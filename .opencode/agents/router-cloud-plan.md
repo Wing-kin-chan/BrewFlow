@@ -1,7 +1,8 @@
 ---
-description: Strong free-cloud planner/reviewer for medium-complexity requirements, trade-offs, decomposition, and review that do not require frontier escalation.
+description: Strong cloud planner/reviewer for medium-complexity requirements, trade-offs, decomposition, and review that do not require frontier escalation.
 mode: subagent
-model: opencode/nemotron-3-ultra-free
+model: openai/gpt-5.6-terra
+reasoningEffort: high
 temperature: 0.1
 permission:
   edit: deny

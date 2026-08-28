@@ -1,7 +1,8 @@
 ---
 description: Strong free-cloud coding specialist for medium-complexity implementation, debugging, and refactoring when local capability is insufficient.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: openai/gpt-5.6-luna
+reasoningEffort: medium
 temperature: 0.1
 permission:
   external_directory: deny
