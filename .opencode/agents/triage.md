@@ -1,7 +1,7 @@
 ---
 description: Default cloud request router. Classifies every development request and delegates it to the cheapest capable specialist, jumping directly to frontier for high-risk work.
 mode: primary
-model: opencode/nemotron-3.5-lightning-free
+model: ollama/qwen3.5:9b
 temperature: 0.1
 permission:
   edit: deny
@@ -15,6 +15,7 @@ permission:
   skill:
     "*": deny
     "request-router": allow
+    "graphify": allow
   task:
     "*": deny
     "router-*": allow
@@ -32,8 +33,7 @@ For every development request:
    or materially fails.
 6. Return the specialist's result concisely.
 
-Answer directly only for Tier-0 meta/trivial questions that do not benefit from
-repository work.
+Answer directly only for Tier-0 meta/trivial questions that do not benefit from repository work.
 
 Never edit files or run shell commands yourself.
 Do not expose lengthy routing analysis unless asked.

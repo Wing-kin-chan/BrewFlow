@@ -1,7 +1,7 @@
 ---
 description: Cheap local coding worker for bounded low-risk implementation, tests, docs, lint fixes, and mechanical refactors.
 mode: subagent
-model: ollama/maternion/mimo-v2.6:9b-instruct
+model: ollama/qwen3.5:9b
 temperature: 0.1
 permission:
   external_directory: deny

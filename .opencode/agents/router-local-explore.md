@@ -1,7 +1,7 @@
 ---
 description: Cheap local read-only specialist for repository exploration, symbol tracing, file discovery, and concise codebase summaries.
 mode: subagent
-model: ollama/maternion/mimo-v2.6:9b-thinking
+model: ollama/qwen3.5:9b
 temperature: 0.1
 permission:
   edit: deny

@@ -1,7 +1,7 @@
 ---
 description: Cheap local planner for small bounded changes that follow existing project architecture and patterns.
 mode: subagent
-model: ollama/maternion/mimo-v2.6:9b-thinking
+model: ollama/deepseek-r1:14b
 temperature: 0.1
 permission:
   edit: deny
