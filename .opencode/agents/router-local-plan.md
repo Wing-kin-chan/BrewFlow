@@ -1,7 +1,7 @@
 ---
 description: Cheap local planner for small bounded changes that follow existing project architecture and patterns.
 mode: subagent
-model: ollama/qwen3:14b
+model: ollama/maternion/mimo-v2.6:9b-thinking
 temperature: 0.1
 permission:
   edit: deny
