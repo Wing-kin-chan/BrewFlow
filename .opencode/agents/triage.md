@@ -5,7 +5,12 @@ model: opencode/nemotron-3.5-lightning-free
 temperature: 0.1
 permission:
   edit: deny
-  bash: deny
+  bash:
+    "git status*": allow
+    "git diff*": allow
+    "git log*": allow
+    "git grep*": allow
+    "git show*": allow
   external_directory: deny
   skill:
     "*": deny
