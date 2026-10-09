@@ -813,54 +813,6 @@
       "norm_label": "test_search_depth_protects_front_of_queue()"
     },
     {
-      "label": "runtime_from_request()",
-      "file_type": "code",
-      "source_file": "brewflow/api/dependencies.py",
-      "source_location": "L6",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "brewflow_api_dependencies_runtime_from_request",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "runtime_from_request()"
-    },
-    {
-      "label": "runtime_from_websocket()",
-      "file_type": "code",
-      "source_file": "brewflow/api/dependencies.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "brewflow_api_dependencies_runtime_from_websocket",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "runtime_from_websocket()"
-    },
-    {
-      "label": "queue_events()",
-      "file_type": "code",
-      "source_file": "brewflow/api/events.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "brewflow_api_events_queue_events",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "queue_events()"
-    },
-    {
-      "label": "history_orders()",
-      "file_type": "code",
-      "source_file": "brewflow/api/history.py",
-      "source_location": "L12",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "brewflow_api_history_history_orders",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "history_orders()"
-    },
-    {
       "label": "add_order()",
       "file_type": "code",
       "source_file": "brewflow/api/queue.py",
@@ -1737,6 +1689,54 @@
       "norm_label": "test_schema_metadata_is_unchanged()"
     },
     {
+      "label": "runtime_from_request()",
+      "file_type": "code",
+      "source_file": "brewflow/api/dependencies.py",
+      "source_location": "L6",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "brewflow_api_dependencies_runtime_from_request",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "runtime_from_request()"
+    },
+    {
+      "label": "runtime_from_websocket()",
+      "file_type": "code",
+      "source_file": "brewflow/api/dependencies.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "brewflow_api_dependencies_runtime_from_websocket",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "runtime_from_websocket()"
+    },
+    {
+      "label": "queue_events()",
+      "file_type": "code",
+      "source_file": "brewflow/api/events.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "brewflow_api_events_queue_events",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "queue_events()"
+    },
+    {
+      "label": "history_orders()",
+      "file_type": "code",
+      "source_file": "brewflow/api/history.py",
+      "source_location": "L12",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "brewflow_api_history_history_orders",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "history_orders()"
+    },
+    {
       "label": "create_pages_router()",
       "file_type": "code",
       "source_file": "brewflow/api/pages.py",
@@ -1797,30 +1797,6 @@
       "norm_label": "load_queue_settings()"
     },
     {
-      "label": "test_production_frontend_is_served_by_fastapi()",
-      "file_type": "code",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L13",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "ci_tests_test_frontend_integration_test_production_frontend_is_served_by_fastapi",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_production_frontend_is_served_by_fastapi()"
-    },
-    {
-      "label": "test_random_order_endpoint_returns_an_order()",
-      "file_type": "code",
-      "source_file": "Orders/tests/test_orders.py",
-      "source_location": "L37",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "orders_tests_test_orders_test_random_order_endpoint_returns_an_order",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_random_order_endpoint_returns_an_order()"
-    },
-    {
       "label": "queue_settings()",
       "file_type": "code",
       "source_file": "tests/conftest.py",
@@ -1831,102 +1807,6 @@
       "community": 5,
       "community_name": "application.py",
       "norm_label": "queue_settings()"
-    },
-    {
-      "label": "make_client()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_make_client",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "make_client()"
-    },
-    {
-      "label": "raw_order()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L25",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_raw_order",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "raw_order()"
-    },
-    {
-      "label": "test_all_product_textures_are_accepted_batched_and_temperature_sorted()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L182",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_all_product_textures_are_accepted_batched_and_temperature_sorted",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_all_product_textures_are_accepted_batched_and_temperature_sorted()"
-    },
-    {
-      "label": "test_intake_completion_history_and_validation()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L56",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_intake_completion_history_and_validation",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_intake_completion_history_and_validation()"
-    },
-    {
-      "label": "test_options_round_trip_and_raw_retry_survive_restart()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L165",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_options_round_trip_and_raw_retry_survive_restart",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_options_round_trip_and_raw_retry_survive_restart()"
-    },
-    {
-      "label": "test_page_routes_are_explicit_and_data_routes_are_json()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L44",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_page_routes_are_explicit_and_data_routes_are_json",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_page_routes_are_explicit_and_data_routes_are_json()"
-    },
-    {
-      "label": "test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L131",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly()"
-    },
-    {
-      "label": "test_two_websocket_clients_receive_intake_and_completion_events()",
-      "file_type": "code",
-      "source_file": "tests/test_api.py",
-      "source_location": "L108",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_api_test_two_websocket_clients_receive_intake_and_completion_events",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "test_two_websocket_clients_receive_intake_and_completion_events()"
     },
     {
       "label": "test_queue_validation_values_come_from_static_config()",
@@ -2035,6 +1915,114 @@
       "community": 56,
       "community_name": "test_orders.py",
       "norm_label": "test_order_generation_is_offline_when_name_source_is_stubbed()"
+    },
+    {
+      "label": "test_random_order_endpoint_returns_an_order()",
+      "file_type": "code",
+      "source_file": "Orders/tests/test_orders.py",
+      "source_location": "L37",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "orders_tests_test_orders_test_random_order_endpoint_returns_an_order",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_random_order_endpoint_returns_an_order()"
+    },
+    {
+      "label": "make_client()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_make_client",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "make_client()"
+    },
+    {
+      "label": "raw_order()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L25",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_raw_order",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "raw_order()"
+    },
+    {
+      "label": "test_all_product_textures_are_accepted_batched_and_temperature_sorted()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L182",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_all_product_textures_are_accepted_batched_and_temperature_sorted",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_all_product_textures_are_accepted_batched_and_temperature_sorted()"
+    },
+    {
+      "label": "test_intake_completion_history_and_validation()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L56",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_intake_completion_history_and_validation",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_intake_completion_history_and_validation()"
+    },
+    {
+      "label": "test_options_round_trip_and_raw_retry_survive_restart()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L165",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_options_round_trip_and_raw_retry_survive_restart",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_options_round_trip_and_raw_retry_survive_restart()"
+    },
+    {
+      "label": "test_page_routes_are_explicit_and_data_routes_are_json()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L44",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_page_routes_are_explicit_and_data_routes_are_json",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_page_routes_are_explicit_and_data_routes_are_json()"
+    },
+    {
+      "label": "test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L131",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_raw_intake_requires_ids_rejects_conflicting_ownership_and_retries_cleanly()"
+    },
+    {
+      "label": "test_two_websocket_clients_receive_intake_and_completion_events()",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L108",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_api_test_two_websocket_clients_receive_intake_and_completion_events",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_two_websocket_clients_receive_intake_and_completion_events()"
     },
     {
       "label": "domain/__init__.py",
@@ -2147,17 +2135,6 @@
       "norm_label": "model_validator"
     },
     {
-      "label": "conftest.py",
-      "file_type": "code",
-      "source_file": "tests/conftest.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_conftest",
-      "community": 0,
-      "community_name": "Order",
-      "norm_label": "conftest.py"
-    },
-    {
       "label": "test_queue.py",
       "file_type": "code",
       "source_file": "tests/test_queue.py",
@@ -2178,83 +2155,6 @@
       "community": 0,
       "community_name": "Order",
       "norm_label": "parametrize"
-    },
-    {
-      "label": "dependencies.py",
-      "file_type": "code",
-      "source_file": "brewflow/api/dependencies.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "brewflow_api_dependencies",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "dependencies.py"
-    },
-    {
-      "label": "WebSocket",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "brewflow_api_dependencies_py_websocket",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "websocket"
-    },
-    {
-      "label": "api/events.py",
-      "file_type": "code",
-      "source_file": "brewflow/api/events.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "brewflow_api_events",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "api/events.py"
-    },
-    {
-      "label": "websocket",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "brewflow_api_events_py_websocket",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "websocket"
-    },
-    {
-      "label": "history.py",
-      "file_type": "code",
-      "source_file": "brewflow/api/history.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "brewflow_api_history",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "history.py"
-    },
-    {
-      "label": "get",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "brewflow_api_history_py_get",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "get"
-    },
-    {
-      "label": "HistorySnapshot",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "brewflow_api_history_py_historysnapshot",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "historysnapshot"
     },
     {
       "label": "api/queue.py",
@@ -2365,28 +2265,6 @@
       "community": 1,
       "community_name": "QueueRuntime",
       "norm_label": "exception"
-    },
-    {
-      "label": "FastAPI",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "fastapi",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "fastapi"
-    },
-    {
-      "label": "Request",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "request",
-      "community": 1,
-      "community_name": "QueueRuntime",
-      "norm_label": "request"
     },
     {
       "label": "test_runtime.py",
@@ -4606,6 +4484,83 @@
       "norm_label": "apirouter"
     },
     {
+      "label": "dependencies.py",
+      "file_type": "code",
+      "source_file": "brewflow/api/dependencies.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "brewflow_api_dependencies",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "dependencies.py"
+    },
+    {
+      "label": "WebSocket",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "brewflow_api_dependencies_py_websocket",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "websocket"
+    },
+    {
+      "label": "api/events.py",
+      "file_type": "code",
+      "source_file": "brewflow/api/events.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "brewflow_api_events",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "api/events.py"
+    },
+    {
+      "label": "websocket",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "brewflow_api_events_py_websocket",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "websocket"
+    },
+    {
+      "label": "history.py",
+      "file_type": "code",
+      "source_file": "brewflow/api/history.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "brewflow_api_history",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "history.py"
+    },
+    {
+      "label": "get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "brewflow_api_history_py_get",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "get"
+    },
+    {
+      "label": "HistorySnapshot",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "brewflow_api_history_py_historysnapshot",
+      "community": 5,
+      "community_name": "application.py",
+      "norm_label": "historysnapshot"
+    },
+    {
       "label": "pages.py",
       "file_type": "code",
       "source_file": "brewflow/api/pages.py",
@@ -4683,15 +4638,15 @@
       "norm_label": "path"
     },
     {
-      "label": "test_frontend_integration.py",
+      "label": "FastAPI",
       "file_type": "code",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L1",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast",
-      "id": "ci_tests_test_frontend_integration",
+      "id": "fastapi",
       "community": 5,
       "community_name": "application.py",
-      "norm_label": "test_frontend_integration.py"
+      "norm_label": "fastapi"
     },
     {
       "label": "fixture",
@@ -4716,48 +4671,26 @@
       "norm_label": "main.py"
     },
     {
-      "label": "TestClient",
+      "label": "Request",
       "file_type": "code",
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "testclient",
+      "id": "request",
       "community": 5,
       "community_name": "application.py",
-      "norm_label": "testclient"
+      "norm_label": "request"
     },
     {
-      "label": "test_api.py",
+      "label": "conftest.py",
       "file_type": "code",
-      "source_file": "tests/test_api.py",
+      "source_file": "tests/conftest.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "tests_test_api",
+      "id": "tests_conftest",
       "community": 5,
       "community_name": "application.py",
-      "norm_label": "test_api.py"
-    },
-    {
-      "label": "parametrize",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "tests_test_api_py_parametrize",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "parametrize"
-    },
-    {
-      "label": "Path",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "tests_test_api_py_path",
-      "community": 5,
-      "community_name": "application.py",
-      "norm_label": "path"
+      "norm_label": "conftest.py"
     },
     {
       "label": "test_settings.py",
@@ -4926,6 +4859,50 @@
       "community": 56,
       "community_name": "test_orders.py",
       "norm_label": "gets a random name from a random user generator api."
+    },
+    {
+      "label": "TestClient",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "testclient",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "testclient"
+    },
+    {
+      "label": "test_api.py",
+      "file_type": "code",
+      "source_file": "tests/test_api.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_api",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "test_api.py"
+    },
+    {
+      "label": "parametrize",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "tests_test_api_py_parametrize",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "parametrize"
+    },
+    {
+      "label": "Path",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "tests_test_api_py_path",
+      "community": 57,
+      "community_name": "test_api.py",
+      "norm_label": "path"
     },
     {
       "label": "graphify/SKILL.md",
@@ -6489,30 +6466,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "brewflow_settings_load_queue_settings",
-      "target": "brewflow_settings_queuesettings",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration_test_production_frontend_is_served_by_fastapi",
-      "target": "brewflow_application_create_app",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L21",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration_test_production_frontend_is_served_by_fastapi",
       "target": "brewflow_settings_queuesettings",
       "confidence_score": 1.0
     },
@@ -8402,30 +8355,6 @@
     },
     {
       "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration",
-      "target": "brewflow_application_create_app",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration",
-      "target": "brewflow_settings_queuesettings",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "frontend/package.json",
       "source_location": "L13",
@@ -9418,30 +9347,6 @@
       "_origin": "ast",
       "source": "brewflow_queue_runtime",
       "target": "brewflow_persistence_orders",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration",
-      "target": "brewflow_application",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration",
-      "target": "brewflow_settings",
       "confidence_score": 1.0
     },
     {
@@ -10839,17 +10744,6 @@
       "_origin": "ast",
       "source": "brewflow_settings",
       "target": "brewflow_settings_load_queue_settings",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration",
-      "target": "ci_tests_test_frontend_integration_test_production_frontend_is_served_by_fastapi",
       "confidence_score": 1.0
     },
     {
@@ -14806,18 +14700,6 @@
       "source": "tests_test_runtime_test_unknown_milk_is_rejected_without_persistence",
       "target": "brewflow_queue_runtime_invalidordervalueerror",
       "confidence_score": 0.5
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "ci_tests/test_frontend_integration.py",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ci_tests_test_frontend_integration_test_production_frontend_is_served_by_fastapi",
-      "target": "testclient"
     },
     {
       "relation": "calls",

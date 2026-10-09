@@ -1,12 +1,12 @@
 # Graph Report - BrewFlow  (2026-10-09)
 
 ## Corpus Check
-- 88 files · ~25,662 words
+- 87 files · ~25,888 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 499 nodes · 781 edges · 57 communities (45 shown, 12 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.51)
+- 497 nodes · 773 edges · 58 communities (46 shown, 12 thin omitted)
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 51 edges (avg confidence: 0.51)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -50,6 +50,7 @@
 - yagni/SKILL.md
 - BrewFlow
 - test_orders.py
+- test_api.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `Order` - 36 edges
@@ -60,8 +61,8 @@
 6. `Requirements` - 17 edges
 7. `QueueEvents` - 16 edges
 8. `Drink` - 15 edges
-9. `QueueSettings` - 15 edges
-10. `create_app()` - 12 edges
+9. `QueueSettings` - 13 edges
+10. `compilerOptions` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `sendOrder()` --uses--> `Order`  [INFERRED]
@@ -81,15 +82,15 @@
 ## Hyperedges (group relationships)
 - **Order Queue Management Logic** — graphify-out::manager_readme_queuemanager, graphify-out::manager_readme_min_order_number_opt, graphify-out::manager_readme_milk_steaming_grouping, graphify-out::manager_readme_grouphead_share, graphify-out::manager_readme_max_backward_moves [EXTRACTED 0.95]
 
-## Communities (57 total, 12 thin omitted)
+## Communities (58 total, 12 thin omitted)
 
 ### Community 0 - "Order"
 Cohesion: 0.09
 Nodes (24): Drink, Order, Any, BaseModel, datetime, Batch, BatchQueueItem, HistorySnapshot (+16 more)
 
 ### Community 1 - "QueueRuntime"
-Cohesion: 0.09
-Nodes (35): WebSocket, runtime_from_request(), runtime_from_websocket(), websocket, queue_events(), history_orders(), get, HistorySnapshot (+27 more)
+Cohesion: 0.13
+Nodes (25): add_order(), complete_drinks(), CompletionRequest, IntakeResponse, BaseModel, get, post, QueueSnapshot (+17 more)
 
 ### Community 2 - "QueuePage.vue"
 Cohesion: 0.07
@@ -104,8 +105,8 @@ Cohesion: 0.06
 Nodes (31): dependencies, vue, vue-router, devDependencies, jsdom, @types/node, typescript, vite (+23 more)
 
 ### Community 5 - "application.py"
-Cohesion: 0.11
-Nodes (26): APIRouter, create_pages_router(), Path, create_app(), Path, load_config(), load_queue_settings(), Any (+18 more)
+Cohesion: 0.10
+Nodes (23): APIRouter, WebSocket, runtime_from_request(), runtime_from_websocket(), websocket, queue_events(), history_orders(), get (+15 more)
 
 ### Community 6 - "What You Must Do When Invoked"
 Cohesion: 0.08
@@ -175,6 +176,10 @@ Nodes (3): About, Covfefes/Orders, Notable Libraries
 Cohesion: 0.23
 Nodes (12): generateDrink(), Random drink generator. Generates an espresso based drink of certain type, with…, generateOrder(), getCustomerName(), Gets a random name from a random user generator API., getOrder(), home(), get (+4 more)
 
+### Community 57 - "test_api.py"
+Cohesion: 0.27
+Nodes (12): test_random_order_endpoint_returns_an_order(), TestClient, make_client(), parametrize, Path, raw_order(), test_all_product_textures_are_accepted_batched_and_temperature_sorted(), test_intake_completion_history_and_validation() (+4 more)
+
 ## Knowledge Gaps
 - **159 isolated node(s):** `$schema`, `.opencode/plugins/graphify.js`, `npm`, `name`, `baseURL` (+154 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -183,7 +188,7 @@ Nodes (12): generateDrink(), Random drink generator. Generates an espresso based
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Order` connect `Order` to `test_orders.py`, `QueueRuntime`, `OrderStore`?**
+- **Why does `Order` connect `Order` to `test_orders.py`, `QueueRuntime`, `OrderStore`, `application.py`?**
   _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Why does `QueueRuntime` connect `QueueRuntime` to `Order`, `QueueEvents`, `OrderStore`, `application.py`?**
   _High betweenness centrality (0.045) - this node is a cross-community bridge._

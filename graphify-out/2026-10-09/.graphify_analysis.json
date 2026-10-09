@@ -1,0 +1,435 @@
+{
+  "communities": {
+    "0": [
+      "graphify-out-2::app_generate_drink",
+      "graphify-out-2::app_generate_drink_generatedrink",
+      "graphify-out-2::app_generate_drink_rationale_17",
+      "graphify-out-2::app_generate_order",
+      "graphify-out-2::app_generate_order_generateorder",
+      "graphify-out-2::app_generate_order_getcustomername",
+      "graphify-out-2::app_generate_order_rationale_9",
+      "graphify-out-2::get",
+      "graphify-out-2::main",
+      "graphify-out-2::main_getorder",
+      "graphify-out-2::main_home",
+      "graphify-out-2::main_sendorder",
+      "graphify-out-2::post",
+      "graphify-out-2::tests_tests",
+      "graphify-out-2::tests_tests_test_generatedrink",
+      "graphify-out-2::tests_tests_test_generateorder",
+      "graphify-out-2::tests_tests_test_getcustomername",
+      "graphify-out-2::tests_tests_test_getorder",
+      "graphify-out-2::tests_tests_test_random_drink_generation",
+      "graphify-out-2::tests_tests_test_random_name_generation",
+      "graphify-out-2::tests_tests_test_random_order_generation"
+    ],
+    "1": [
+      "graphify-out::app_models_init",
+      "graphify-out::app_models_init_drink",
+      "graphify-out::app_models_init_drink_eq",
+      "graphify-out::app_models_init_drink_hash",
+      "graphify-out::app_models_init_drink_init",
+      "graphify-out::app_models_init_drink_repr",
+      "graphify-out::app_models_init_order",
+      "graphify-out::app_models_init_order_check_drinkorderid",
+      "graphify-out::app_models_init_order_check_drinkowner",
+      "graphify-out::app_models_init_order_check_drinktime",
+      "graphify-out::app_models_init_order_eq",
+      "graphify-out::app_models_init_order_group_drinks",
+      "graphify-out::app_models_init_order_repr",
+      "graphify-out::app_models_init_py_basemodel",
+      "graphify-out::app_scripts_queuemanager_fetchorder",
+      "graphify-out::app_scripts_queuemanager_fetchorder_fetchorder",
+      "graphify-out::app_scripts_queuemanager_fetchorder_rationale_10",
+      "graphify-out::app_scripts_queuemanager_init",
+      "graphify-out::app_scripts_queuemanager_init_batch",
+      "graphify-out::app_scripts_queuemanager_init_batch_add_drink",
+      "graphify-out::app_scripts_queuemanager_init_batch_can_add_drink",
+      "graphify-out::app_scripts_queuemanager_init_batch_repr",
+      "graphify-out::app_scripts_queuemanager_init_py_basemodel",
+      "graphify-out::app_scripts_queuemanager_init_queue_getcompleteditems",
+      "graphify-out::app_scripts_queuemanager_init_rationale_14",
+      "graphify-out::model_validator"
+    ],
+    "2": [
+      "graphify-out::tests_test_queuemanager",
+      "graphify-out::tests_test_queuemanager_adam_order",
+      "graphify-out::tests_test_queuemanager_date_time",
+      "graphify-out::tests_test_queuemanager_hannah_order",
+      "graphify-out::tests_test_queuemanager_jeff_order",
+      "graphify-out::tests_test_queuemanager_kayleigh_order",
+      "graphify-out::tests_test_queuemanager_oat_cappuccinos",
+      "graphify-out::tests_test_queuemanager_orders",
+      "graphify-out::tests_test_queuemanager_py_asyncio",
+      "graphify-out::tests_test_queuemanager_py_fixture",
+      "graphify-out::tests_test_queuemanager_queue",
+      "graphify-out::tests_test_queuemanager_soy_cappuccino",
+      "graphify-out::tests_test_queuemanager_testcompletedrinks",
+      "graphify-out::tests_test_queuemanager_testcompletedrinks_test_complete_drinks",
+      "graphify-out::tests_test_queuemanager_testorderbatching",
+      "graphify-out::tests_test_queuemanager_testorderbatching_test_cross_order_batching",
+      "graphify-out::tests_test_queuemanager_testorderbatching_test_order_batching",
+      "graphify-out::tests_test_queuemanager_testqueueinitialization",
+      "graphify-out::tests_test_queuemanager_testqueueinitialization_test_queue_initialization",
+      "graphify-out::tests_test_queuemanager_testqueueoperations",
+      "graphify-out::tests_test_queuemanager_testqueueoperations_test_add_order",
+      "graphify-out::tests_test_queuemanager_testqueueoperations_test_complete_item"
+    ],
+    "3": [
+      "graphify-out::app_models_db",
+      "graphify-out::app_models_db_base",
+      "graphify-out::app_models_db_drinks",
+      "graphify-out::app_models_db_orders",
+      "graphify-out::app_scripts_services_crud",
+      "graphify-out::app_scripts_services_crud_connection",
+      "graphify-out::app_scripts_services_crud_connection_addorder",
+      "graphify-out::app_scripts_services_crud_connection_clearoldrecords",
+      "graphify-out::app_scripts_services_crud_connection_clearqueue",
+      "graphify-out::app_scripts_services_crud_connection_close",
+      "graphify-out::app_scripts_services_crud_connection_getqueue",
+      "graphify-out::app_scripts_services_crud_connection_init",
+      "graphify-out::app_scripts_services_crud_rationale_116",
+      "graphify-out::app_scripts_services_crud_rationale_27",
+      "graphify-out::app_scripts_services_crud_rationale_91",
+      "graphify-out::app_scripts_services_init_pydanticorm",
+      "graphify-out::app_scripts_services_init_pydanticorm_readdrinksorm",
+      "graphify-out::app_scripts_services_init_pydanticorm_readordersorm",
+      "graphify-out::declarativebase",
+      "graphify-out::tests_test_queuedb",
+      "graphify-out::tests_test_queuedb_adam_order",
+      "graphify-out::tests_test_queuedb_connection",
+      "graphify-out::tests_test_queuedb_hannah_order",
+      "graphify-out::tests_test_queuedb_jeff_order",
+      "graphify-out::tests_test_queuedb_py_asyncio",
+      "graphify-out::tests_test_queuedb_py_fixture",
+      "graphify-out::tests_test_queuedb_testconnection",
+      "graphify-out::tests_test_queuedb_testconnection_test_connection_type",
+      "graphify-out::tests_test_queuedb_testcreateoperations",
+      "graphify-out::tests_test_queuedb_testcreateoperations_test_addorder",
+      "graphify-out::tests_test_queuedb_testcreateoperations_test_addorder_multiple_drinks",
+      "graphify-out::tests_test_queuedb_testdeleteoperations",
+      "graphify-out::tests_test_queuedb_testdeleteoperations_test_clearoldrecords",
+      "graphify-out::tests_test_queuedb_testdeleteoperations_test_clearqueue",
+      "graphify-out::tests_test_queuedb_testreadoperations",
+      "graphify-out::tests_test_queuedb_testreadoperations_test_getqueue",
+      "graphify-out::tests_test_queuedb_testupdateoperations",
+      "graphify-out::tests_test_queuedb_testupdateoperations_test_completedrink",
+      "graphify-out::tests_test_queuedb_testupdateoperations_test_completeorder"
+    ],
+    "4": [
+      "graphify-out::app_scripts_queuemanager_init_queue",
+      "graphify-out::app_scripts_queuemanager_init_queue_add_orderhistoryindex",
+      "graphify-out::app_scripts_queuemanager_init_queue_addorder",
+      "graphify-out::app_scripts_queuemanager_init_queue_clean_empty_orders",
+      "graphify-out::app_scripts_queuemanager_init_queue_completedrinks",
+      "graphify-out::app_scripts_queuemanager_init_queue_completeitem",
+      "graphify-out::app_scripts_queuemanager_init_queue_countcompletedorders",
+      "graphify-out::app_scripts_queuemanager_init_queue_init",
+      "graphify-out::app_scripts_queuemanager_init_queue_initialize_lookuptable",
+      "graphify-out::app_scripts_queuemanager_init_queue_load_from_db",
+      "graphify-out::app_scripts_queuemanager_init_queue_remove_item_from_lookuptable",
+      "graphify-out::app_scripts_queuemanager_init_queue_repr",
+      "graphify-out::app_scripts_queuemanager_init_queue_update_lookuptable_on_batch",
+      "graphify-out::app_scripts_queuemanager_init_rationale_155",
+      "graphify-out::app_scripts_queuemanager_init_rationale_167",
+      "graphify-out::app_scripts_queuemanager_init_rationale_180",
+      "graphify-out::app_scripts_queuemanager_init_rationale_192",
+      "graphify-out::app_scripts_queuemanager_init_rationale_297",
+      "graphify-out::app_scripts_queuemanager_init_rationale_341",
+      "graphify-out::app_scripts_queuemanager_init_rationale_53"
+    ],
+    "5": [
+      "graphify-out::app_scripts_services_init",
+      "graphify-out::app_scripts_services_init_connectionmanager",
+      "graphify-out::app_scripts_services_init_connectionmanager_broadcast",
+      "graphify-out::app_scripts_services_init_connectionmanager_connect",
+      "graphify-out::app_scripts_services_init_connectionmanager_disconnect",
+      "graphify-out::app_scripts_services_init_connectionmanager_init",
+      "graphify-out::app_scripts_services_init_formdata",
+      "graphify-out::app_scripts_services_init_jsonlist",
+      "graphify-out::app_scripts_services_init_jsonlist_get_validators",
+      "graphify-out::app_scripts_services_init_jsonlist_validate",
+      "graphify-out::app_scripts_services_init_py_basemodel",
+      "graphify-out::app_scripts_services_init_py_websocket",
+      "graphify-out::app_scripts_services_init_utils",
+      "graphify-out::app_scripts_services_init_utils_getaddress",
+      "graphify-out::rootmodel"
+    ],
+    "6": [
+      "graphify-out::fastapi",
+      "graphify-out::get",
+      "graphify-out::main",
+      "graphify-out::main_complete",
+      "graphify-out::main_history",
+      "graphify-out::main_index",
+      "graphify-out::main_lifespan",
+      "graphify-out::main_neworder",
+      "graphify-out::main_py_websocket",
+      "graphify-out::main_receivedata",
+      "graphify-out::post",
+      "graphify-out::request"
+    ],
+    "7": [
+      "graphify-out::manager_app_static_css_style",
+      "graphify-out::manager_app_static_js_index",
+      "graphify-out::manager_app_templates_history",
+      "graphify-out::manager_app_templates_history_batch",
+      "graphify-out::manager_app_templates_history_history",
+      "graphify-out::manager_app_templates_history_selectdrink",
+      "graphify-out::manager_app_templates_index",
+      "graphify-out::manager_app_templates_index_batch",
+      "graphify-out::manager_app_templates_index_drink",
+      "graphify-out::manager_app_templates_index_queue",
+      "graphify-out::manager_app_templates_index_selectdrink",
+      "graphify-out::manager_app_templates_index_selectorder"
+    ],
+    "8": [
+      "graphify-out::app_static_js_index",
+      "graphify-out::app_static_js_index_deselectall",
+      "graphify-out::app_static_js_index_form",
+      "graphify-out::app_static_js_index_selectdrink",
+      "graphify-out::app_static_js_index_selecteddrinkids",
+      "graphify-out::app_static_js_index_selectorder",
+      "graphify-out::app_static_js_index_socket",
+      "graphify-out::app_static_js_index_submitbutton",
+      "graphify-out::app_static_js_index_updateorderlist"
+    ],
+    "9": [
+      "graphify-out::manager_readme",
+      "graphify-out::manager_readme_covfefes_waiter",
+      "graphify-out::manager_readme_grouphead_share",
+      "graphify-out::manager_readme_max_backward_moves",
+      "graphify-out::manager_readme_milk_steaming_grouping",
+      "graphify-out::manager_readme_min_order_number_opt",
+      "graphify-out::manager_readme_queuemanager"
+    ],
+    "10": [
+      "graphify-out::app_data_init",
+      "graphify-out::app_data_init_rationale_1"
+    ],
+    "11": [
+      "graphify-out::tests_test_orderfetcher",
+      "graphify-out::tests_test_orderfetcher_test_fetchorders"
+    ],
+    "12": [
+      "graphify-out::app_init"
+    ],
+    "13": [
+      "graphify-out::init"
+    ],
+    "14": [
+      "graphify-out::tests_init"
+    ],
+    "15": [
+      "graphify-out-2::orders_readme",
+      "graphify-out-2::orders_readme_covfefes_orders",
+      "graphify-out-2::orders_readme_fastapi",
+      "graphify-out-2::orders_readme_orders_endpoint",
+      "graphify-out-2::orders_readme_pydantic",
+      "graphify-out-2::orders_readme_pytest",
+      "graphify-out-2::orders_readme_random_order_generation"
+    ],
+    "16": [
+      "graphify-out::app_models_db_database",
+      "graphify-out::app_models_db_database_getsession",
+      "graphify-out::app_models_db_database_init",
+      "graphify-out::app_models_db_database_init_db",
+      "graphify-out::app_scripts_queuemanager_init_queue_create",
+      "graphify-out::app_scripts_services_crud_connection_new",
+      "graphify-out::asyncsession"
+    ],
+    "17": [
+      "graphify-out::app_scripts_services_crud_connection_completedrink",
+      "graphify-out::app_scripts_services_crud_connection_completeorder",
+      "graphify-out::app_scripts_services_crud_rationale_60",
+      "graphify-out::app_scripts_services_crud_rationale_75",
+      "graphify-out::time"
+    ],
+    "18": [
+      "graphify-out-2::app_init"
+    ],
+    "19": [
+      "graphify-out-2::config_init"
+    ],
+    "20": [
+      "graphify-out-2::config_options"
+    ],
+    "21": [
+      "graphify-out-2::init"
+    ],
+    "22": [
+      "graphify-out-2::tests_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.13333333333333333,
+    "1": 0.09230769230769231,
+    "2": 0.14285714285714285,
+    "3": 0.09581646423751687,
+    "4": 0.14736842105263157,
+    "5": 0.14285714285714285,
+    "6": 0.24242424242424243,
+    "7": 0.25757575757575757,
+    "8": 0.2777777777777778,
+    "9": 0.2857142857142857,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 0.2857142857142857,
+    "16": 0.2857142857142857,
+    "17": 0.4,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0
+  },
+  "gods": [
+    {
+      "id": "graphify-out::app_scripts_services_crud_connection",
+      "label": "Connection",
+      "degree": 20
+    },
+    {
+      "id": "graphify-out::app_scripts_queuemanager_init_queue",
+      "label": "Queue",
+      "degree": 18
+    },
+    {
+      "id": "graphify-out::app_models_init_order",
+      "label": "Order",
+      "degree": 15
+    },
+    {
+      "id": "graphify-out::app_models_init_drink",
+      "label": "Drink",
+      "degree": 11
+    },
+    {
+      "id": "graphify-out::app_models_db_orders",
+      "label": "Orders",
+      "degree": 9
+    },
+    {
+      "id": "graphify-out::app_models_db_drinks",
+      "label": "Drinks",
+      "degree": 8
+    },
+    {
+      "id": "graphify-out::manager_app_templates_index",
+      "label": "Drink Orders Template",
+      "degree": 8
+    },
+    {
+      "id": "graphify-out::app_scripts_queuemanager_init_batch",
+      "label": "Batch",
+      "degree": 7
+    },
+    {
+      "id": "graphify-out-2::app_generate_order_generateorder",
+      "label": "generateOrder()",
+      "degree": 7
+    },
+    {
+      "id": "graphify-out::tests_test_queuedb_testdeleteoperations",
+      "label": "TestDeleteOperations",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "receiveData()",
+      "target": "Order",
+      "source_files": [
+        "main.py",
+        "app/models/__init__.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "queue()",
+      "target": "Queue",
+      "source_files": [
+        "tests/test_queueManager.py",
+        "app/scripts/queueManager/__init__.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_generateDrink()",
+      "target": "generateDrink()",
+      "source_files": [
+        "tests/tests.py",
+        "app/generate_drink.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_generateDrink()` unexpectedly reaches hub `generateDrink()`"
+    },
+    {
+      "source": "test_random_drink_generation()",
+      "target": "generateDrink()",
+      "source_files": [
+        "tests/tests.py",
+        "app/generate_drink.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_random_drink_generation()` unexpectedly reaches hub `generateDrink()`"
+    },
+    {
+      "source": "test_generateOrder()",
+      "target": "generateOrder()",
+      "source_files": [
+        "tests/tests.py",
+        "app/generate_order.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_generateOrder()` unexpectedly reaches hub `generateOrder()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Connection` connect `Connection` to `Database`, `.completeDrink`, `Queue`?",
+      "why": "High betweenness centrality (0.188) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Queue` connect `Queue` to `Database`, `Order`, `test_queueManager.py`, `Connection`?",
+      "why": "High betweenness centrality (0.175) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Order` connect `Order` to `Connection`, `Queue`, `main.py`?",
+      "why": "High betweenness centrality (0.123) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 10 inferred relationships involving `Connection` (e.g. with `Queue` and `Database`) actually correct?",
+      "why": "`Connection` has 10 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `Queue` (e.g. with `Connection` and `queue()`) actually correct?",
+      "why": "`Queue` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 6 inferred relationships involving `Orders` (e.g. with `Connection` and `.addOrder()`) actually correct?",
+      "why": "`Orders` has 6 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `form`, `selectedDrinkIDs`, `socket` to the rest of the system?",
+      "why": "11 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
+}
