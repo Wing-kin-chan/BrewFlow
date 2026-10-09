@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from Orders.app.generate_order import generateOrder
-from Manager.app.models import Order
+from brewflow.domain.models import Order
 import httpx, json, logging
 
 logging.basicConfig(level = logging.DEBUG)
@@ -42,5 +42,4 @@ async def sendOrder(url: str = Form(...)):
 
 @app.get('/random_order', response_model = Order)
 def getOrder():
-    order = generateOrder()
-    return JSONResponse(order.model_dump_json())
+    return generateOrder()

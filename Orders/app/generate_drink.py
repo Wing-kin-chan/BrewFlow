@@ -1,7 +1,9 @@
+import copy
 import random, json, os
 from typing import List
+from uuid import uuid4
 
-RELATIVE_PATH = "../../Manager/config/"
+RELATIVE_PATH = "../../brewflow/config/"
 CONFIG_FILE_PATH = os.path.join(
     os.path.dirname(__file__), RELATIVE_PATH, "config.json"
 )
@@ -20,7 +22,7 @@ def generateDrink() -> dict:
     shot number, milk texture and temperature, and other options.
     '''
     #Choose drink and milk type
-    drink_choice = random.choice(DRINKS)
+    drink_choice = copy.deepcopy(random.choice(DRINKS))
     if drink_choice['drink'] in ['Espresso', 'Long Black', 'Short Black']:
         milk_choice = "No Milk"
     else:
@@ -50,13 +52,14 @@ def generateDrink() -> dict:
     #Choose milk temperature
     if 'Extra Hot' in options:
         drink_choice['temperature'] = 'Extra Hot'
-    if 'Warm' in options:
+    elif 'Warm' in options:
         drink_choice['temperature'] = 'Warm'
     else:
         drink_choice['temperature'] = 'Normal'
 
     drink_choice['orderID'] = None
     drink_choice['customer'] = None
+    drink_choice['identifier'] = uuid4().hex
     drink_choice['timeComplete'] = None
     drink_choice['timeReceived'] = None
 

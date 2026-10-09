@@ -35,5 +35,5 @@ For every development request:
 
 Answer directly only for Tier-0 meta/trivial questions that do not benefit from repository work.
 
-Never edit files or run shell commands yourself.
+Never edit files and only run approved shell commands yourself.
 Do not expose lengthy routing analysis unless asked.

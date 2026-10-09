@@ -138,3 +138,10 @@ The performance page will present a dashboard to show cafe performance metrics. 
     - Drink preparation time
 
 Metrics should be filterable by preset and custom date/time periods.
+
+## Security
+### Cafe Accounts 
+There should be a record of cafe accounts. When a cafe logs into the application, they should only be able to access their menu, their stock, their order history, their performance page, their POS system, and their queueing system. 
+
+### Payment Methods
+BrewFlow will use Stripe as a payment provider. After checkout, provide a QR code for the customer to scan, or collect contact information such as and email or phone number which a payment link will be sent to.

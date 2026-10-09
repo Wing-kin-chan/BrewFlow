@@ -1,4 +1,4 @@
-name: Python Tests
+name: CI
 
 on:
   push:
@@ -6,184 +6,63 @@ on:
       - main
       - QueueManager.v2
       - QueueManager.v3
+      - rework
   pull_request:
     branches: [ main ]
 
 jobs:
-  Build:
+  backend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
       with:
-        python-version: '3.11.9'
-    - name: Cache dependencies
-      id: cache-dependencies
-      uses: actions/cache@v4
+        enable-cache: true
+        cache-dependency-glob: uv.lock
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-        restore-keys: |
-          ${{ runner.os }}-uv-
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install -r requirements.txt
-    - name: Save cache
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+        python-version: '3.11'
+    - name: Install locked dependencies
+      run: uv sync --locked
+    - name: Run backend tests
+      run: uv run pytest -q
+    - name: Build backend package
+      run: uv build
 
-  Lint:
+  frontend:
     runs-on: ubuntu-latest
-    needs: Build
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
-    - name: Set up uv
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+    - name: Install locked dependencies
+      run: npm --prefix frontend ci
+    - name: Run frontend tests
+      run: npm --prefix frontend test
+    - name: Typecheck frontend
+      run: npm --prefix frontend run typecheck
+    - name: Build frontend
+      run: npm --prefix frontend run build
+    - name: Set up uv for frontend integration
       uses: astral-sh/setup-uv@v5
-    - name: Restore dependencies
-      uses: actions/cache@v4
       with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
+        enable-cache: true
+        cache-dependency-glob: uv.lock
+    - name: Set up Python for frontend integration
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.11.9'
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install flake8 pytest
-    - name: Lint with flake8
-      run: |
-        uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-  test-OrderGenerator:
-    runs-on: ubuntu-latest
-    needs: Build
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v5
-    - name: Restore dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11.9'
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install flake8 pytest
-        if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
-    - name: test-OrderAPI
-      run: |
-        uv run pytest Orders/tests/tests.py
-
-  test-fetchOrder:
-    runs-on: ubuntu-latest
-    needs: [Build, test-OrderGenerator]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v5
-    - name: Restore dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11.9'
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install flake8 pytest
-        if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
-    - name: Start FastAPI Server
-      run: |
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        uv run uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
-      env:
-        PORT: 8000
-    - name: Test fetchOrder API
-      env:
-        BASE_URL: http://127.0.0.1:8000
-      run: |
-        sleep 5 #Wait for Uvicorn server to initialize
-        uv run pytest Manager/tests/test_orderFetcher.py
-
-  test-queueManager:
-    runs-on: 'ubuntu-latest'
-    needs: [Build, test-OrderGenerator]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v5
-    - name: Restore dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11.9'
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install flake8 pytest
-        if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
-    - name: Start FastAPI Server
-      run: |
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        uv run uvicorn Orders.main:app --host 127.0.0.1 --port 8000 &
-      env:
-        PORT: 8000
-    - name: Test queueManager
-      env:
-        BASEURL: http://127.0.0.1:8000
-      run: |
-        sleep 5 #Wait for Uvicorn server to start
-        uv run pytest Manager/tests/test_queueManager.py
-
-  test-queueDB:
-    runs-on: 'ubuntu-latest'
-    needs: Build
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v5
-    - name: Restore dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-    - name: Set up Python 3.11.9
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.11.9'
-    - name: Install dependencies
-      run: |
-        uv venv
-        uv pip install --upgrade pip
-        uv pip install flake8 pytest
-        if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
-    - name: Run test-queueDB
-      run: |
-        uv run pytest Manager/tests/test_queueDB.py
+        python-version: '3.11'
+    - name: Install backend dependencies for frontend integration
+      run: uv sync --locked
+    - name: Run production frontend integration
+      run: uv run pytest -q ci_tests/test_frontend_integration.py
