@@ -1,6 +1,9 @@
 # BrewFlow
 BrewFlow is a barista workflow optimizer that is aimed at reducing barista cognitive load, increasing milk steaming efficiency, minimizing milk context switching and errors, and improving customer wait times and satisfaction.
 
+## Usage
+The application should be a lightweight browser based SaaS product. It should be able to run on low-end portable devices such as tablets that are used as kitchen and bar order screens in many small businesses. For cafes with multiple coffee stations, each coffee station should have their separate queue instance, for now just assume multiple POS systems feed orders into one queue system.
+
 ## Requirements
 ### Drink Class
 An abstract representation of a drink. This is a data class that should hold all attributes of the drink being prepared. The drink class is a child of its parent order. Attributes include:
@@ -89,9 +92,49 @@ The Configuration page allows baristas to specify the following parameters:
     - Service periods: Create service periods by day and specify the times they start and end. 
 
 ### POS Page
+The point of sales (POS) page will be the screen used to select items to add to a customer's order. It should have food and drink items grouped into tabs configured in the menu page. The tabs should be present in a navigation bar on the left handside of the screen. To the right of the navigation bar and in the centre of the page is an area that should display the food or drink items present in the group. On the right hand side of the page, there should be an area to display the customer's basket, item quantities and cost, and total cost. Additionally, it should have a search bar for staff members to search for items manually and add the desired result to the customer basket.
+
+When an order is complete and payment processed, only the drinks items should be sent to the queue page.
 
 ### Menu Page
+The menu page is an area where a cafe staff member can add, edit, and remove food and drink items on their menu. Food and drink items should have the following attributes:
+    - Item name
+    - Item picture
+    - Item cost
+    - Externally sourced?
+    - Item ingredients and amounts
+
+Food and drink items can be put into groups, a group can be made or deleted by the appropriate staff member. Each group and its child items will correspond to their respective tab on the POS page. If the item is externally sourced, adding ingredients will be disabled. When adding ingredients to a food item, users will be able to search a dropdown of their existing ingredients, or add a new ingredient. A newly added ingredient will create a new record in their stock page.  
 
 ### Stock Page
+The stock page will be an interactive visualization of a stock database table for the cafe. There will be two tables, one for raw ingredients, and one for menu items. The table for raw ingredients should have the following columns:
+    - Item name
+    - Supplier
+    - Current quantity
+    - Unit cost
+
+The table for menu items should have the following columns:
+    - Item name
+    - Sales (Currency)
+    - Sales quantity
+    - Amount remaining
+    - Expected Sales
+    - Waste
+    - Variance
+
+The stock page will give the user ability to update quantities for each record either through restocking (adding stock) or wastage (manually decreasing stock not through sales or wastage). When a menu item that uses ingredients is restocked, the associated ingredients used for that menu item should be adjusted accordingly (see item ingredients and amounts for items in the menu page).
 
 ### Performance Page
+The performance page will present a dashboard to show cafe performance metrics. Metrics include, in order of importance:
+    - Net Sales
+    - Gross Sales
+    - Ingredient Cost
+    - Wastage
+    - Variance
+    - Top 5 drinks items
+    - Top 5 food items
+    - Low stock items
+    - Basket size
+    - Drink preparation time
+
+Metrics should be filterable by preset and custom date/time periods.
