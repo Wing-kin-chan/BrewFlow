@@ -1,4 +1,4 @@
-from Manager.app.models import Order
+from brewflow.domain.models import Order
 from Orders.app.generate_drink import generateDrink
 from datetime import datetime
 import requests, random, uuid
@@ -35,13 +35,13 @@ def generateOrder():
     
     if 15 < seed < 40:
         drinks = [generateDrink() for _ in range(0, random.randint(1, 3))]
-    if seed < 15:
+    elif seed < 15:
         drinks = [generateDrink() for _ in range(0, random.randint(3, 10))]
     else:
         drinks = [generateDrink()]
 
     order = Order(orderID = orderID,
-                    customer = customer,
+                    customer = customer or "Customer",
                     dateReceived = order_date,
                     timeReceived = order_time,
                     timeComplete = None,

@@ -13,11 +13,11 @@ Do not manufacture requirements.
 Replace these placeholders as soon as the project stack is chosen.
 
 ```text
-Install:    <PROJECT_INSTALL_COMMAND>
-Test:       <PROJECT_TEST_COMMAND>
-Lint:       <PROJECT_LINT_COMMAND>
-Typecheck:  <PROJECT_TYPECHECK_COMMAND>
-Build:      <PROJECT_BUILD_COMMAND>
+Install:    uv sync && npm --prefix frontend ci
+Test:       uv run pytest -q && npm --prefix frontend test
+Lint:       <not configured>
+Typecheck:  npm --prefix frontend run typecheck
+Build:      uv build && npm --prefix frontend run build
 ```
 
 Prefer focused checks while iterating, then run the project's required full checks before

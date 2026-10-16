@@ -1,0 +1,163 @@
+{
+    "drinks": [
+        {
+            "id": "latte",
+            "drink": "Latte",
+            "price_minor": 340,
+            "milk_volume": 2,
+            "shots": 2,
+            "texture": "Wet"
+        },
+        {
+            "id": "cappuccino",
+            "drink": "Cappuccino",
+            "price_minor": 340,
+            "milk_volume": 2,
+            "shots": 2,
+            "texture": "Dry"
+        },
+        {
+            "id": "flat-white",
+            "drink": "Flat White",
+            "price_minor": 320,
+            "milk_volume": 1,
+            "shots": 2,
+            "texture": "Wet"
+        },
+        {
+            "id": "macchiato",
+            "drink": "Macchiato",
+            "price_minor": 300,
+            "milk_volume": 0.5,
+            "shots": 2,
+            "texture": "Dry"
+        },
+        {
+            "id": "cortado",
+            "drink": "Cortado",
+            "price_minor": 310,
+            "milk_volume": 0.5,
+            "shots": 2,
+            "texture": "Wet"
+        },
+        {
+            "id": "small-latte",
+            "drink": "Small Latte",
+            "price_minor": 320,
+            "milk_volume": 1,
+            "shots": 1,
+            "texture": "Wet"
+        },
+        {
+            "id": "small-cappuccino",
+            "drink": "Small Cappuccino",
+            "price_minor": 320,
+            "milk_volume": 1,
+            "shots": 1,
+            "texture": "Dry"
+        },
+        {
+            "id": "espresso",
+            "drink": "Espresso",
+            "price_minor": 280,
+            "milk_volume": 0,
+            "shots": 2,
+            "texture": null
+        },
+        {
+            "id": "long-black",
+            "drink": "Long Black",
+            "price_minor": 300,
+            "milk_volume": 0,
+            "shots": 2,
+            "texture": null
+        },
+        {
+            "id": "short-black",
+            "drink": "Short Black",
+            "price_minor": 290,
+            "milk_volume": 0,
+            "shots": 2,
+            "texture": null
+        },
+        {
+            "id": "mocha",
+            "drink": "Mocha",
+            "price_minor": 360,
+            "milk_volume": 2,
+            "shots": 2,
+            "texture": "Wet"
+        },
+        {
+            "id": "chai-latte",
+            "drink": "Chai Latte",
+            "price_minor": 350,
+            "milk_volume": 2,
+            "shots": 0,
+            "texture": "Wet"
+        }
+    ],
+    "milks": [
+        "Whole",
+        "Semi-skimmed",
+        "Oat",
+        "Soy"
+    ],
+    "currency": "gbp",
+    "milk_surcharges_minor": {
+        "No Milk": 0,
+        "Whole": 0,
+        "Semi-skimmed": 0,
+        "Oat": 60,
+        "Soy": 60
+    },
+    "textures": [
+        "Extra Wet",
+        "Wet",
+        "Dry",
+        "Extra Dry"
+    ],
+    "options":[
+        "Decaf",
+        "Single Shot",
+        "Extra Shot",
+        "Extra Shot x2",
+        "Agave Syrup",
+        "Honey",
+        "Maple Syrup",
+        "Extra Hot",
+        "Warm",
+        "Chocolate",
+        "Cinnamon"
+    ],
+    "MILK_COLORS": {
+        "Whole": "orangered",
+        "Semi-skimmed": "orangered",
+        "Oat": "aliceblue",
+        "Soy": "gold"
+    },
+    "SEARCH_DEPTH": 1,
+    "MAX_BATCH_VOLUME": 5,
+    "PORT": "8080",
+    "LOGGING": {
+        "version": 1,
+        "disable_existing_loggers": false,
+        "formatters": {
+            "default": {
+                "()": "uvicorn.logging.DefaultFormatter",
+                "fmt": "%(levelprefix)s %(message)s",
+                "use_colors": null
+            }
+        },
+        "handlers": {
+            "default": {
+                "formatter": "default",
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout"
+            }
+        },
+        "loggers": {
+            "": {"handlers": ["default"], "level": "DEBUG"}
+        }
+    }
+}
