@@ -14,7 +14,7 @@ Replace these placeholders as soon as the project stack is chosen.
 
 ```text
 Install:    uv sync && npm --prefix frontend ci
-Test:       uv run pytest -q && npm --prefix frontend test
+Test:       PYTHONDONTWRITEBYTECODE=0 uv run pytest -q && npm --prefix frontend test
 Lint:       <not configured>
 Typecheck:  npm --prefix frontend run typecheck
 Build:      uv build && npm --prefix frontend run build
