@@ -1,6 +1,6 @@
 from asyncio import Lock
 from copy import deepcopy
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import datetime
 
 from brewflow.domain.models import Order
@@ -86,7 +86,9 @@ class QueueRuntime:
                 f"Unknown texture value: {', '.join(unknown_textures)}"
             )
 
-    async def intake(self, submitted: Order) -> tuple[str, QueueSnapshot]:
+    async def intake(
+        self, submitted: Order, *, reserved_pos_order_id: str | None = None
+    ) -> tuple[str, QueueSnapshot]:
         self._validate_order(submitted)
         async with self.lock:
             existing = await self.store.get_order(submitted.orderID)
@@ -98,6 +100,12 @@ class QueueRuntime:
             drink_ids = {drink.identifier for drink in submitted.drinks}
             if await self.store.drink_identifiers_exist(drink_ids):
                 raise IntakeConflictError("A drink identifier is already in use")
+            if await self.store.pos_identifiers_conflict(
+                submitted.orderID,
+                drink_ids,
+                allowed_order_id=reserved_pos_order_id,
+            ):
+                raise IntakeConflictError("An order or drink identifier is reserved")
 
             order = deepcopy(submitted)
             order.stamp_received(self._now())
@@ -137,3 +145,18 @@ class QueueRuntime:
     async def history_snapshot(self) -> HistorySnapshot:
         async with self.lock:
             return self.queue.history_snapshot(self.revision)
+
+    async def reserve_external_order(
+        self,
+        order_id: str,
+        drink_identifiers: set[str],
+        reserve: Callable[[], Awaitable[None]],
+    ) -> bool:
+        async with self.lock:
+            if (
+                await self.store.get_order(order_id) is not None
+                or await self.store.drink_identifiers_exist(drink_identifiers)
+            ):
+                return False
+            await reserve()
+            return True

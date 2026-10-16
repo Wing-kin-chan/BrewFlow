@@ -56,3 +56,87 @@ export interface HistorySnapshot {
   totalOrders: number;
   totalDrinks: number;
 }
+
+export interface CatalogItem {
+  id: string;
+  name: string;
+  priceMinor: number;
+  milkVolume: number;
+  shots: number;
+  texture: Texture | null;
+}
+
+export interface Catalog {
+  currency: "gbp";
+  group: "Drinks";
+  items: CatalogItem[];
+  milks: string[];
+  textures: Texture[];
+  options: string[];
+  milkSurchargesMinor: Record<string, number>;
+}
+
+export interface PosOrderItemInput {
+  identifier: string;
+  catalogItemID: string;
+  milk: string;
+  texture: Texture | null;
+  temperature: Temperature;
+  options: string[];
+}
+
+export interface PosOrderInput {
+  orderID: string;
+  customer: string | null;
+  items: PosOrderItemInput[];
+}
+
+export interface PricedItem extends PosOrderItemInput {
+  name: string;
+  unitAmountMinor: number;
+}
+
+interface CheckoutResponseBase {
+  orderID: string;
+  status: "pending_payment" | "paid" | "queued";
+  currency: "gbp";
+  totalMinor: number;
+  items: PricedItem[];
+}
+
+export type CheckoutResponse = CheckoutResponseBase &
+  (
+    | {
+        isDemo: false;
+        demoBlocked: false;
+        stripeSessionID: string;
+        checkoutURL: string;
+      }
+    | {
+        isDemo: true;
+        demoBlocked: boolean;
+        stripeSessionID: null;
+        checkoutURL: null;
+      }
+  );
+
+export interface Receipt {
+  orderID: string;
+  customer: string;
+  status: "pending_payment" | "paid" | "queued";
+  checkoutStatus: "creating" | "open" | "paid" | "expired" | "failed";
+  currency: "gbp";
+  totalMinor: number;
+  items: PricedItem[];
+  createdAt: string;
+  paidAt: string | null;
+  queuedAt: string | null;
+  isDemo: boolean;
+  demoBlocked: boolean;
+}
+
+export interface DemoModeConfiguration {
+  demoModeEnabled: boolean;
+  demoModePersisted: boolean;
+  demoModeAvailable: boolean;
+}

@@ -15,6 +15,21 @@ export const routes: RouteRecordRaw[] = [
     name: "history",
     component: () => import("./pages/OrderHistoryPage.vue"),
   },
+  {
+    path: "/api/pos",
+    name: "pos",
+    component: () => import("./pages/PosPage.vue"),
+  },
+  {
+    path: "/api/receipt",
+    name: "receipt",
+    component: () => import("./pages/ReceiptPage.vue"),
+  },
+  {
+    path: "/api/configuration",
+    name: "configuration",
+    component: () => import("./pages/ConfigurationPage.vue"),
+  },
 ];
 
 export default createRouter({

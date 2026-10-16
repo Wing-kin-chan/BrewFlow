@@ -28,4 +28,16 @@ def create_pages_router(frontend_dist: Path) -> APIRouter:
     async def history_page() -> FileResponse:
         return frontend_page()
 
+    @router.get("/api/pos", include_in_schema=False)
+    async def pos_page() -> FileResponse:
+        return frontend_page()
+
+    @router.get("/api/receipt", include_in_schema=False)
+    async def receipt_page() -> FileResponse:
+        return frontend_page()
+
+    @router.get("/api/configuration", include_in_schema=False)
+    async def configuration_page() -> FileResponse:
+        return frontend_page()
+
     return router

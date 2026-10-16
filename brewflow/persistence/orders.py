@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from brewflow.domain.models import Drink, Order
-from brewflow.persistence.db import Database, Drinks, Orders
+from brewflow.persistence.db import Database, Drinks, Orders, PosOrderItems, PosOrders
 
 
 def decode_options(value: str | None) -> list[str]:
@@ -114,6 +114,29 @@ class OrderStore:
             select(Drinks.identifier).where(Drinks.identifier.in_(identifiers)).limit(1)
         )
         return result.scalar_one_or_none() is not None
+
+    async def pos_identifiers_conflict(
+        self,
+        order_id: str,
+        drink_identifiers: set[str],
+        *,
+        allowed_order_id: str | None = None,
+    ) -> bool:
+        order_result = await self.session.execute(
+            select(PosOrders.orderID).where(PosOrders.orderID == order_id).limit(1)
+        )
+        reserved_order_id = order_result.scalar_one_or_none()
+        if reserved_order_id is not None and reserved_order_id != allowed_order_id:
+            return True
+        if not drink_identifiers:
+            return False
+        item_query = select(PosOrderItems.orderID).where(
+            PosOrderItems.identifier.in_(drink_identifiers)
+        )
+        if allowed_order_id is not None:
+            item_query = item_query.where(PosOrderItems.orderID != allowed_order_id)
+        item_result = await self.session.execute(item_query.limit(1))
+        return item_result.scalar_one_or_none() is not None
 
     async def service_orders(self, service_date: date) -> list[Order]:
         result = await self.session.execute(
