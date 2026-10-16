@@ -1,73 +1,97 @@
 {
     "drinks": [
         {
+            "id": "latte",
             "drink": "Latte",
+            "price_minor": 340,
             "milk_volume": 2,
             "shots": 2,
             "texture": "Wet"
         },
         {
+            "id": "cappuccino",
             "drink": "Cappuccino",
+            "price_minor": 340,
             "milk_volume": 2,
             "shots": 2,
             "texture": "Dry"
         },
         {
+            "id": "flat-white",
             "drink": "Flat White",
+            "price_minor": 320,
             "milk_volume": 1,
             "shots": 2,
             "texture": "Wet"
         },
         {
+            "id": "macchiato",
             "drink": "Macchiato",
+            "price_minor": 300,
             "milk_volume": 0.5,
             "shots": 2,
             "texture": "Dry"
         },
         {
+            "id": "cortado",
             "drink": "Cortado",
+            "price_minor": 310,
             "milk_volume": 0.5,
             "shots": 2,
             "texture": "Wet"
         },
         {
+            "id": "small-latte",
             "drink": "Small Latte",
+            "price_minor": 320,
             "milk_volume": 1,
             "shots": 1,
             "texture": "Wet"
         },
         {
+            "id": "small-cappuccino",
             "drink": "Small Cappuccino",
+            "price_minor": 320,
             "milk_volume": 1,
             "shots": 1,
             "texture": "Dry"
         },
         {
+            "id": "espresso",
             "drink": "Espresso",
+            "price_minor": 280,
             "milk_volume": 0,
             "shots": 2,
             "texture": null
         },
         {
+            "id": "long-black",
             "drink": "Long Black",
+            "price_minor": 300,
             "milk_volume": 0,
             "shots": 2,
             "texture": null
         },
         {
+            "id": "short-black",
             "drink": "Short Black",
+            "price_minor": 290,
             "milk_volume": 0,
             "shots": 2,
             "texture": null
         },
         {
+            "id": "mocha",
             "drink": "Mocha",
+            "price_minor": 360,
             "milk_volume": 2,
             "shots": 2,
             "texture": "Wet"
         },
         {
+            "id": "chai-latte",
             "drink": "Chai Latte",
+            "price_minor": 350,
             "milk_volume": 2,
             "shots": 0,
             "texture": "Wet"
@@ -79,6 +103,14 @@
         "Oat",
         "Soy"
     ],
+    "currency": "gbp",
+    "milk_surcharges_minor": {
+        "No Milk": 0,
+        "Whole": 0,
+        "Semi-skimmed": 0,
+        "Oat": 60,
+        "Soy": 60
+    },
     "textures": [
         "Extra Wet",
         "Wet",

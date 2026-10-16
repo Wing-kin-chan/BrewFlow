@@ -28,7 +28,13 @@ def test_production_frontend_is_served_by_fastapi(tmp_path):
     )
 
     with TestClient(app) as client:
-        for page in ("/api/queue", "/api/history"):
+        for page in (
+            "/api/queue",
+            "/api/history",
+            "/api/pos",
+            "/api/receipt",
+            "/api/configuration",
+        ):
             response = client.get(page)
             assert response.status_code == 200
             assert response.headers["content-type"].startswith("text/html")
@@ -50,3 +56,8 @@ def test_production_frontend_is_served_by_fastapi(tmp_path):
 
         assert client.get("/api/unknown").status_code == 404
         assert client.get("/assets/missing.js").status_code == 404
+
+    javascript_chunks = {path.name for path in (FRONTEND_DIST / "assets").glob("*.js")}
+    assert any(name.startswith("PosPage-") for name in javascript_chunks)
+    assert any(name.startswith("ReceiptPage-") for name in javascript_chunks)
+    assert any(name.startswith("ConfigurationPage-") for name in javascript_chunks)
