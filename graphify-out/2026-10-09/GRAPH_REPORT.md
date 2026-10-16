@@ -1,26 +1,26 @@
 # Graph Report - BrewFlow  (2026-10-09)
 
 ## Corpus Check
-- 87 files · ~25,888 words
+- 96 files · ~33,718 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 497 nodes · 773 edges · 58 communities (46 shown, 12 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 51 edges (avg confidence: 0.51)
+- 694 nodes · 1391 edges · 64 communities (51 shown, 13 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 110 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `99aebae1`
+- Built from commit: `cb750b23`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Order
 - QueueRuntime
+- application.py
 - QueuePage.vue
 - OrderStore
 - devDependencies
-- application.py
+- test_payments.py
 - What You Must Do When Invoked
 - Requirements
 - compilerOptions
@@ -48,21 +48,28 @@
 - features/README.md
 - extraction-spec.md
 - yagni/SKILL.md
+- PosPage.vue
 - BrewFlow
-- test_orders.py
+- PaymentRuntime
+- types.ts
 - test_api.py
+- OrderHistoryPage.vue
+- pages.test.ts
+- router.ts
+- pos-pages.test.ts
+- test_orders.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `Order` - 36 edges
-2. `QueueRuntime` - 34 edges
-3. `Queue` - 29 edges
-4. `make_order()` - 25 edges
-5. `OrderStore` - 20 edges
-6. `Requirements` - 17 edges
-7. `QueueEvents` - 16 edges
-8. `Drink` - 15 edges
-9. `QueueSettings` - 13 edges
-10. `compilerOptions` - 12 edges
+1. `PaymentRuntime` - 46 edges
+2. `QueueRuntime` - 42 edges
+3. `Order` - 41 edges
+4. `Queue` - 29 edges
+5. `make_order()` - 25 edges
+6. `OrderStore` - 23 edges
+7. `Drink` - 22 edges
+8. `PosStore` - 22 edges
+9. `make_runtime()` - 22 edges
+10. `create_app()` - 19 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `sendOrder()` --uses--> `Order`  [INFERRED]
@@ -71,10 +78,10 @@
   Orders/tests/test_orders.py → brewflow/domain/models.py
 - `test_order_generation_is_offline_when_name_source_is_stubbed()` --uses--> `Order`  [INFERRED]
   Orders/tests/test_orders.py → brewflow/domain/models.py
-- `test_schema_metadata_is_unchanged()` --uses--> `Base`  [INFERRED]
-  tests/test_persistence.py → brewflow/persistence/db.py
-- `generateOrder()` --calls--> `Order`  [EXTRACTED]
-  Orders/app/generate_order.py → brewflow/domain/models.py
+- `test_checkout_is_server_priced_persisted_first_and_idempotent()` --uses--> `Order`  [INFERRED]
+  tests/test_payments.py → brewflow/domain/models.py
+- `pos_order()` --uses--> `PosOrderInput`  [INFERRED]
+  tests/test_payments.py → brewflow/domain/pos.py
 
 ## Import Cycles
 - None detected.
@@ -82,31 +89,31 @@
 ## Hyperedges (group relationships)
 - **Order Queue Management Logic** — graphify-out::manager_readme_queuemanager, graphify-out::manager_readme_min_order_number_opt, graphify-out::manager_readme_milk_steaming_grouping, graphify-out::manager_readme_grouphead_share, graphify-out::manager_readme_max_backward_moves [EXTRACTED 0.95]
 
-## Communities (58 total, 12 thin omitted)
+## Communities (64 total, 13 thin omitted)
 
-### Community 0 - "Order"
-Cohesion: 0.09
-Nodes (24): Drink, Order, Any, BaseModel, datetime, Batch, BatchQueueItem, HistorySnapshot (+16 more)
+### Community 0 - "QueueRuntime"
+Cohesion: 0.06
+Nodes (52): history_orders(), get, HistorySnapshot, add_order(), complete_drinks(), CompletionRequest, IntakeResponse, BaseModel (+44 more)
 
-### Community 1 - "QueueRuntime"
-Cohesion: 0.13
-Nodes (25): add_order(), complete_drinks(), CompletionRequest, IntakeResponse, BaseModel, get, post, QueueSnapshot (+17 more)
+### Community 1 - "application.py"
+Cohesion: 0.11
+Nodes (28): APIRouter, payment_runtime_from_request(), Request, WebSocket, runtime_from_request(), runtime_from_websocket(), websocket, queue_events() (+20 more)
 
 ### Community 2 - "QueuePage.vue"
-Cohesion: 0.07
-Nodes (31): completeDrinks(), fetchHistory(), fetchQueue(), responseJson(), connectQueueEvents(), QueueEventConnection, QueueEventKind, BatchQueueItem (+23 more)
+Cohesion: 0.18
+Nodes (12): completeDrinks(), fetchCatalog(), fetchQueue(), responseJson(), applySnapshot(), completeSelected(), completing, error (+4 more)
 
 ### Community 3 - "OrderStore"
-Cohesion: 0.11
-Nodes (20): Base, Database, Drinks, Orders, AsyncSession, decode_options(), drink_from_record(), order_from_record() (+12 more)
+Cohesion: 0.07
+Nodes (29): Base, Database, Drinks, _enable_sqlite_foreign_keys(), Orders, PaymentAttempts, PosOrderItems, PosOrders (+21 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.06
-Nodes (31): dependencies, vue, vue-router, devDependencies, jsdom, @types/node, typescript, vite (+23 more)
+Nodes (35): dependencies, qrcode, vue, vue-router, devDependencies, jsdom, @types/node, @types/qrcode (+27 more)
 
-### Community 5 - "application.py"
-Cohesion: 0.10
-Nodes (23): APIRouter, WebSocket, runtime_from_request(), runtime_from_websocket(), websocket, queue_events(), history_orders(), get (+15 more)
+### Community 5 - "test_payments.py"
+Cohesion: 0.15
+Nodes (35): Clock, close_runtime(), FakeSessions, FakeStripeClient, make_runtime(), paid_event(), payment_settings(), pos_order() (+27 more)
 
 ### Community 6 - "What You Must Do When Invoked"
 Cohesion: 0.08
@@ -172,33 +179,57 @@ Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphif
 Cohesion: 0.50
 Nodes (3): About, Covfefes/Orders, Notable Libraries
 
-### Community 56 - "test_orders.py"
-Cohesion: 0.23
+### Community 37 - "PosPage.vue"
+Cohesion: 0.07
+Nodes (28): createCheckout(), Temperature, Texture, addItem(), BasketLine, buildOrder(), catalog, checkout (+20 more)
+
+### Community 56 - "PaymentRuntime"
+Cohesion: 0.09
+Nodes (37): catalog(), create_pos_order(), CheckoutResponse, get, PosOrderInput, post, Request, receipt() (+29 more)
+
+### Community 57 - "types.ts"
+Cohesion: 0.13
+Nodes (18): fetchReceipt(), BatchQueueItem, Catalog, CatalogItem, CheckoutResponse, CompletedOrder, Drink, OrderQueueItem (+10 more)
+
+### Community 58 - "test_api.py"
+Cohesion: 0.30
+Nodes (11): make_client(), parametrize, Path, TestClient, raw_order(), test_all_product_textures_are_accepted_batched_and_temperature_sorted(), test_intake_completion_history_and_validation(), test_options_round_trip_and_raw_retry_survive_restart() (+3 more)
+
+### Community 59 - "OrderHistoryPage.vue"
+Cohesion: 0.27
+Nodes (8): fetchHistory(), connectQueueEvents(), QueueEventConnection, QueueEventKind, HistorySnapshot, error, refresh(), snapshot
+
+### Community 60 - "pages.test.ts"
+Cohesion: 0.25
+Nodes (3): drink, FakeWebSocket, MockResponse
+
+### Community 62 - "pos-pages.test.ts"
+Cohesion: 0.50
+Nodes (3): catalog, checkout, { toDataURL }
+
+### Community 63 - "test_orders.py"
+Cohesion: 0.21
 Nodes (12): generateDrink(), Random drink generator. Generates an espresso based drink of certain type, with…, generateOrder(), getCustomerName(), Gets a random name from a random user generator API., getOrder(), home(), get (+4 more)
 
-### Community 57 - "test_api.py"
-Cohesion: 0.27
-Nodes (12): test_random_order_endpoint_returns_an_order(), TestClient, make_client(), parametrize, Path, raw_order(), test_all_product_textures_are_accepted_batched_and_temperature_sorted(), test_intake_completion_history_and_validation() (+4 more)
-
 ## Knowledge Gaps
-- **159 isolated node(s):** `$schema`, `.opencode/plugins/graphify.js`, `npm`, `name`, `baseURL` (+154 more)
+- **179 isolated node(s):** `$schema`, `.opencode/plugins/graphify.js`, `npm`, `name`, `baseURL` (+174 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Order` connect `Order` to `test_orders.py`, `QueueRuntime`, `OrderStore`, `application.py`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
-- **Why does `QueueRuntime` connect `QueueRuntime` to `Order`, `QueueEvents`, `OrderStore`, `application.py`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `QueueEvents` connect `QueueEvents` to `QueueRuntime`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Are the 7 inferred relationships involving `Order` (e.g. with `add_order()` and `HistorySnapshot`) actually correct?**
-  _`Order` has 7 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 19 inferred relationships involving `QueueRuntime` (e.g. with `runtime_from_request()` and `runtime_from_websocket()`) actually correct?**
-  _`QueueRuntime` has 19 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `QueueRuntime` connect `QueueRuntime` to `application.py`, `OrderStore`, `test_payments.py`, `QueueEvents`, `PaymentRuntime`?**
+  _High betweenness centrality (0.056) - this node is a cross-community bridge._
+- **Why does `Order` connect `QueueRuntime` to `PaymentRuntime`, `OrderStore`, `test_payments.py`, `test_orders.py`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `PaymentRuntime` connect `PaymentRuntime` to `QueueRuntime`, `application.py`, `test_payments.py`?**
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+- **Are the 21 inferred relationships involving `PaymentRuntime` (e.g. with `payment_runtime_from_request()` and `catalog()`) actually correct?**
+  _`PaymentRuntime` has 21 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 22 inferred relationships involving `QueueRuntime` (e.g. with `runtime_from_request()` and `runtime_from_websocket()`) actually correct?**
+  _`QueueRuntime` has 22 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 9 inferred relationships involving `Order` (e.g. with `add_order()` and `HistorySnapshot`) actually correct?**
+  _`Order` has 9 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `Queue` (e.g. with `Drink` and `Order`) actually correct?**
   _`Queue` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 7 inferred relationships involving `OrderStore` (e.g. with `Order` and `Database`) actually correct?**
-  _`OrderStore` has 7 INFERRED edges - model-reasoned connections that need verification._
